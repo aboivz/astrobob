@@ -1,17 +1,25 @@
+<div align="center">
+
+<img src="astrobob_logomascot.PNG" alt="AstroBob Logo" width="200"/>
+
 # AstroBob
 
-> **Memory-Powered Agent Toolkit for IBM Bob**  
-> Give your AI agents persistent semantic, episodic, and procedural memory via AstraDB
+**Memory-Powered Agent Toolkit for IBM Bob**  
+Give your AI agents persistent semantic, episodic, and procedural memory via AstraDB
 
 [![Python 3.12+](https://img.shields.io/badge/python-3.12+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Tests](https://img.shields.io/badge/tests-passing-brightgreen.svg)](tests/)
 
+**[📖 Full Documentation](https://aboivz.github.io/astrobob/index.html)** | [Quick Start](#-quick-start) | [MCP Tools](#-mcp-tools) | [Examples](examples/)
+
+</div>
+
 ---
 
 ## 🎯 What is AstroBob?
 
-AstroBob is a memory system that gives IBM Bob (and other AI agents) the ability to **remember, learn, and improve** across sessions. Instead of forgetting everything between conversations, agents can:
+AstroBob gives IBM Bob (and other AI agents) the ability to **remember, learn, and improve** across sessions:
 
 - **Remember facts** (semantic memory) - "This project uses FastAPI 0.104"
 - **Recall events** (episodic memory) - "Fixed auth bug on May 15th"
@@ -32,8 +40,6 @@ AstroBob is a memory system that gives IBM Bob (and other AI agents) the ability
 
 ### Installation
 
-#### Option 1: Using uv (Recommended)
-
 ```bash
 # Install uv if you haven't already
 curl -LsSf https://astral.sh/uv/install.sh | sh
@@ -41,42 +47,20 @@ curl -LsSf https://astral.sh/uv/install.sh | sh
 # Install AstroBob
 uv tool install astrobob
 
-# Or install from source
-git clone https://github.com/aboivz/astrobob.git
-cd astrobob
-uv sync
-```
-
-#### Option 2: Using pip
-
-```bash
-pip install astrobob
-
 # Or from source
 git clone https://github.com/aboivz/astrobob.git
 cd astrobob
-pip install -e .
+uv sync
 ```
 
 ### Configuration
 
 1. **Get AstraDB Credentials**
    - Sign up at [astra.datastax.com](https://astra.datastax.com)
-   - Create a Serverless (vector) database in **AWS `us-east-2`** or **GCP `us-east1`** (required for NVIDIA integration)
-   - The database will automatically support vector search with NVIDIA embeddings
+   - Create a Serverless (vector) database in **AWS `us-east-2`** or **GCP `us-east1`**
    - Copy your API Endpoint and Application Token
 
-2. **Set Environment Variables**
-
-```bash
-# Create .env file in your project
-cat > .env << EOF
-ASTRA_DB_API_ENDPOINT=https://your-db-id-us-east-2.apps.astra.datastax.com
-ASTRA_DB_APPLICATION_TOKEN=AstraCS:your-token-here
-EOF
-```
-
-3. **Initialize AstroBob**
+2. **Initialize AstroBob**
 
 ```bash
 # Navigate to your project directory
@@ -87,12 +71,8 @@ astrobob init
 
 # Set up AstraDB collections
 astrobob astra setup
-```
 
-4. **Verify Installation**
-
-```bash
-# Run health check
+# Verify installation
 astrobob doctor
 ```
 
@@ -100,11 +80,9 @@ You should see all checks passing! ✅
 
 ---
 
-## 📖 Usage
+## 📖 Basic Usage
 
-### Basic Memory Operations
-
-#### Store a Memory
+### Store Memories
 
 ```bash
 # Store a semantic memory (fact)
@@ -129,7 +107,7 @@ astrobob memory remember \
   --tags mcp,development,procedure
 ```
 
-#### Recall Memories
+### Recall Memories
 
 ```bash
 # Search across all memory types (uses natural language with automatic embedding)
@@ -138,23 +116,11 @@ astrobob memory recall "how to add MCP tool" --project my-project
 # Search specific memory type
 astrobob memory recall "authentication" --project my-project --type episodic
 
-# Filter by tags
-astrobob memory recall "bug fixes" --project my-project --tag auth --tag bug
-
-# Filter by importance
-astrobob memory recall "python patterns" --project my-project --min-importance 4
-
-# Limit results
-astrobob memory recall "python" --project my-project --limit 5
+# Filter by tags and importance
+astrobob memory recall "bug fixes" --project my-project --tag auth --min-importance 4
 ```
 
-**How it works:**
-- Queries are automatically converted to vector embeddings using NVIDIA's `nvidia/nv-embedqa-e5-v5` model
-- Vector search finds semantically similar memories
-- Results are ranked by relevance, importance, and recency
-- Query intent routing prioritizes the right memory types (e.g., "how to" → procedural first)
-
-#### Reflect on Experiences
+### Reflect on Experiences
 
 ```bash
 # Create procedural memory from episodic memories
@@ -166,52 +132,17 @@ astrobob memory reflect \
   --importance 4
 ```
 
-#### View Memory Report
+---
+
+## 🤖 MCP Tools
+
+AstroBob integrates with IBM Bob via MCP (Model Context Protocol). Start the server:
 
 ```bash
-# See memory statistics
-astrobob memory report
-
-# For specific project
-astrobob memory report --project my-project
-```
-
-### Using with IBM Bob
-
-AstroBob integrates seamlessly with IBM Bob via MCP (Model Context Protocol).
-
-#### 1. Start MCP Server
-
-```bash
-# STDIO mode (default for Bob)
 astrobob mcp serve
-
-# HTTP mode (for debugging - not yet implemented)
-astrobob mcp serve --transport http
 ```
 
-#### 2. Bob Configuration
-
-The `astrobob init` command creates `.bob/mcp.json` with the correct configuration:
-
-```json
-{
-  "mcpServers": {
-    "astrobob": {
-      "command": "astrobob",
-      "args": ["mcp", "serve"],
-      "env": {
-        "ASTRA_DB_API_ENDPOINT": "your-endpoint",
-        "ASTRA_DB_APPLICATION_TOKEN": "your-token"
-      }
-    }
-  }
-}
-```
-
-#### 3. Available MCP Tools
-
-Bob can use these 5 tools:
+### Available Tools
 
 | Tool | Purpose | Example |
 |------|---------|---------|
@@ -221,22 +152,11 @@ Bob can use these 5 tools:
 | `forget` | Soft-delete memory | `forget(type="episodic", memory_id="...")` |
 | `audit_trail` | View memory history | `audit_trail(type="procedural", memory_id="...")` |
 
-#### 4. Bob Skills
-
-AstroBob includes 3 pre-built skills for Bob:
-
-- **Astra Memory Engineer** - Manages memory operations
-- **WxO Agent Builder** - Builds multi-agent systems
-- **Agent Reflector** - Facilitates learning from experience
-
-#### 5. Export Learned Skills
+### Export Learned Skills
 
 ```bash
 # Export high-importance procedural memories as Bob skills
 astrobob skills sync
-
-# Dry run to preview
-astrobob skills sync --dry-run
 
 # Filter by importance
 astrobob skills sync --min-importance 4
@@ -271,108 +191,32 @@ This creates `.bob/skills/learned/<skill-name>/SKILL.md` files that Bob can use 
 └─────────────────────────────────────┘
 ```
 
-### Vector Search with NVIDIA Embeddings
-
-AstroBob uses **NVIDIA's `nvidia/nv-embedqa-e5-v5`** embedding model for automatic vector generation:
-
-- **Automatic Embedding**: Content is stored in `$vectorize` field, embeddings generated automatically
-- **1024 dimensions**: High-quality semantic representations
-- **Cosine similarity**: Optimal for semantic search
-- **No manual embedding**: Just store text, AstraDB handles the rest
-
-**Requirements**: Database must be in AWS `us-east-2` or GCP `us-east1` for NVIDIA integration.
-
 ### Memory Types
 
-| Type | Purpose | Example | Lifecycle |
-|------|---------|---------|-----------|
-| **Semantic** | Stable facts | "Project uses FastAPI 0.104" | Update + supersede |
-| **Episodic** | Events that happened | "Fixed auth bug on 2026-05-15" | Append-only |
-| **Procedural** | Reusable playbooks | "How to add MCP tool: 5 steps" | Curate by success_count |
+| Type | Purpose | Example |
+|------|---------|---------|
+| **Semantic** | Stable facts | "Project uses FastAPI 0.104" |
+| **Episodic** | Events that happened | "Fixed auth bug on 2026-05-15" |
+| **Procedural** | Reusable playbooks | "How to add MCP tool: 5 steps" |
 
 **Key Insight**: Reflections convert episodic → procedural via the `reflect()` tool.
 
-### Ranking System
-
-Memories are ranked using a weighted formula:
-
-```
-final_score = (
-    0.55 * vector_similarity_score +  # NVIDIA embedding similarity
-    0.15 * (importance / 5.0) +       # User-assigned importance
-    0.15 * exp(-age_days / 30) +      # Recency (30-day half-life)
-    0.10 * log1p(success_count) / log1p(20) -  # Success tracking
-    0.05 * staleness_penalty          # Penalize unaccessed memories
-)
-```
-
-**Vector Search Process**:
-1. Query text → NVIDIA embedding (automatic via `$vectorize`)
-2. Vector similarity search in AstraDB
-3. Results ranked by combined score
-4. Most relevant memories returned
-
-This ensures the most relevant, important, and recent memories surface first.
-
 ---
 
-## 🔧 Advanced Usage
+## 📚 Documentation
 
-### WxO Multi-Agent Integration
+**[📖 Full Documentation](https://aboivz.github.io/astrobob/index.html)**
 
-AstroBob supports Watsonx Orchestrate (WxO) multi-agent systems. See `examples/wxo/` for:
-
-- Agent configuration templates
-- Memory coordination patterns
-- Python tool wrappers
-- Integration examples
-
-### Custom Memory Scopes
-
-```bash
-# Project-scoped (default) - visible to project team
-astrobob memory remember --scope project --content "..."
-
-# User-scoped - personal preferences
-astrobob memory remember --scope user --content "..."
-
-# Global-scoped - universal best practices
-astrobob memory remember --scope global --content "..."
-```
-
-### Provenance Tracking
-
-Every memory tracks its origin:
-
-```python
-{
-  "provenance": {
-    "derived_from": ["episode-id-1", "episode-id-2"],
-    "session_id": "session-123",
-    "tool_call_id": "call-456",
-    "bob_skill_used": "astra-memory-engineer"
-  }
-}
-```
-
-### Memory Lifecycle
-
-```bash
-# View memory details
-astrobob memory audit --type procedural --id <memory-id>
-
-# Soft delete (preserves for audit)
-astrobob memory forget --type episodic --id <memory-id>
-
-# Update access tracking (automatic on recall)
-# Access count and last_accessed_at are updated
-```
+- [Installation Guide](https://aboivz.github.io/astrobob/installation.html)
+- [Quick Start](https://aboivz.github.io/astrobob/quickstart.html)
+- [MCP Tools Reference](https://aboivz.github.io/astrobob/mcp-tools.html)
+- [CLI Reference](https://aboivz.github.io/astrobob/cli-reference.html)
+- [Troubleshooting](https://aboivz.github.io/astrobob/troubleshooting.html)
+- [FAQ](https://aboivz.github.io/astrobob/faq.html)
 
 ---
 
 ## 🧪 Development
-
-### Running Tests
 
 ```bash
 # Unit tests
@@ -380,9 +224,6 @@ uv run pytest tests/unit/ -v
 
 # Integration tests (requires live AstraDB)
 RUN_INTEGRATION=1 uv run pytest tests/integration/ -v
-
-# All tests
-uv run pytest tests/ -v
 
 # With coverage
 uv run pytest tests/ --cov=astrobob --cov-report=html
@@ -398,38 +239,11 @@ astrobob/
 │   ├── astra/            # AstraDB client and collections
 │   ├── mcp_server/       # MCP server implementation
 │   ├── skills_export/    # Skill generation from procedural memories
-│   ├── templates/        # Jinja2 templates for init command
-│   ├── config.py         # Configuration management
-│   ├── models.py         # Pydantic data models
-│   └── errors.py         # Custom exceptions
-├── tests/
-│   ├── unit/             # Unit tests
-│   └── integration/      # Integration tests
-├── examples/
-│   └── wxo/              # WxO integration examples
-└── scripts/              # Development scripts
+│   └── templates/        # Jinja2 templates for init command
+├── tests/                # Unit and integration tests
+├── examples/wxo/         # WxO integration examples
+└── docs/                 # Documentation site
 ```
-
-### Contributing
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Make your changes
-4. Run tests (`uv run pytest tests/`)
-5. Commit your changes (`git commit -m 'Add amazing feature'`)
-6. Push to the branch (`git push origin feature/amazing-feature`)
-7. Open a Pull Request
-
----
-
-## 📚 Documentation
-
-- **[Installation Guide](docs/installation.md)** - Detailed setup instructions
-- **[Configuration Guide](docs/configuration.md)** - All configuration options
-- **[API Reference](docs/api-reference.md)** - Complete API documentation
-- **[MCP Tools Reference](docs/mcp-tools.md)** - MCP tool specifications
-- **[Architecture Guide](docs/architecture.md)** - System design and internals
-- **[Troubleshooting](docs/troubleshooting.md)** - Common issues and solutions
 
 ---
 
@@ -437,7 +251,6 @@ astrobob/
 
 - **Issues**: [GitHub Issues](https://github.com/aboivz/astrobob/issues)
 - **Discussions**: [GitHub Discussions](https://github.com/aboivz/astrobob/discussions)
-- **Discord**: [Join our community](https://discord.gg/astrobob)
 
 ---
 
@@ -453,17 +266,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - Powered by [AstraDB](https://www.datastax.com/products/datastax-astra)
 - Uses [FastMCP](https://github.com/jlowin/fastmcp) for MCP protocol
 - Inspired by cognitive science research on human memory systems
-
----
-
-## 🎯 Roadmap
-
-- [ ] Working memory (short-term context)
-- [ ] Memory consolidation (automatic reflection)
-- [ ] Multi-user collaboration
-- [ ] Memory visualization dashboard
-- [ ] Claude Desktop integration
-- [ ] VS Code extension
 
 ---
 
