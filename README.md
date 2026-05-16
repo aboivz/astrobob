@@ -4,8 +4,8 @@
 
 # AstroBob
 
-**Memory-Powered Agent Toolkit for IBM Bob**  
-Give your AI agents persistent semantic, episodic, and procedural memory via AstraDB
+**Self-Teaching AI Agent Memory System**
+Transform IBM Bob into a continuously learning agent that remembers across sessions and teaches itself new skills
 
 [![Python 3.12+](https://img.shields.io/badge/python-3.12+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
@@ -19,13 +19,20 @@ Give your AI agents persistent semantic, episodic, and procedural memory via Ast
 
 ## 🎯 What is AstroBob?
 
-AstroBob gives IBM Bob (and other AI agents) the ability to **remember, learn, and improve** across sessions:
+AstroBob is a **cross-session memory system** that enables IBM Bob to learn from every interaction and build expertise over time. Unlike traditional AI agents that forget everything between conversations, AstroBob creates a **self-teaching feedback loop**:
 
-- **Remember facts** (semantic memory) - "This project uses FastAPI 0.104"
-- **Recall events** (episodic memory) - "Fixed auth bug on May 15th"
-- **Apply procedures** (procedural memory) - "How to add a new MCP tool: 5 steps"
+### 🧠 Cross-Session Memory
+- **Semantic Memory**: Persistent knowledge that survives restarts - "This project uses FastAPI 0.104"
+- **Episodic Memory**: Historical record of what happened - "Fixed auth bug on May 15th at 3pm"
+- **Procedural Memory**: Self-written playbooks and skills - "How to add a new MCP tool: 5 steps"
 
-**The Magic**: Bob can reflect on its experiences and write its own skills, creating a self-improving feedback loop.
+### 🔄 Self-Teaching Loop
+1. **Experience**: Bob works on tasks and stores episodic memories
+2. **Reflect**: Bob analyzes past experiences to extract lessons learned
+3. **Learn**: Bob writes its own procedural skills from those lessons
+4. **Apply**: Bob uses learned skills in future sessions, getting better over time
+
+**The Result**: An AI agent that becomes more capable with each session, building institutional knowledge and expertise automatically.
 
 ---
 
