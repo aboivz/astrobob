@@ -59,6 +59,13 @@ uv sync
    - Sign up at [astra.datastax.com](https://astra.datastax.com)
    - Create a Serverless (vector) database in **AWS `us-east-2`** or **GCP `us-east1`**
    - Copy your API Endpoint and Application Token
+   - Create .env file accordingly:
+
+```bash
+# AstraDB Configuration (Required)
+ASTRA_DB_API_ENDPOINT=https://YOUR_DATABASE_ID-YOUR_REGION.apps.astra.datastax.com
+ASTRA_DB_APPLICATION_TOKEN=AstraCS:YOUR_TOKEN_HERE
+```
 
 2. **Initialize AstroBob**
 
