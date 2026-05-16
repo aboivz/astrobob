@@ -511,11 +511,11 @@ def recall(
         "-p",
         help="Project to search",
     ),
-    memory_types: list[Literal["semantic", "episodic", "procedural"]] = typer.Option(
+    memory_types: list[str] = typer.Option(
         [],
         "--type",
         "-t",
-        help="Memory types to search (can be specified multiple times, default: all)",
+        help="Memory types to search: semantic, episodic, or procedural (can be specified multiple times, default: all)",
     ),
     tags: list[str] = typer.Option(
         [],
@@ -549,6 +549,15 @@ def recall(
     """
     console.print("\n[bold cyan]Searching memories...[/bold cyan]\n")
     
+    # Validate memory types
+    valid_types = {"semantic", "episodic", "procedural"}
+    if memory_types:
+        invalid_types = [t for t in memory_types if t not in valid_types]
+        if invalid_types:
+            console.print(f"[red]Error: Invalid memory type(s): {', '.join(invalid_types)}[/red]")
+            console.print(f"[yellow]Valid types are: {', '.join(valid_types)}[/yellow]")
+            sys.exit(1)
+    
     # Load configuration
     try:
         config = ensure_config_or_exit()
@@ -571,10 +580,16 @@ def recall(
     
     # Perform recall
     try:
+        # Cast validated memory_types to proper Literal type
+        from astrobob.core.retriever import MemoryType
+        typed_memory_types: Optional[list[MemoryType]] = None
+        if memory_types:
+            typed_memory_types = [t for t in memory_types]  # type: ignore
+        
         results = retriever.recall(
             query=query,
             project=project,
-            memory_types=memory_types if memory_types else None,
+            memory_types=typed_memory_types,
             tags=tags if tags else None,
             limit=limit,
             min_importance=min_importance,

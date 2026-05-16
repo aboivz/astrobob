@@ -65,35 +65,72 @@ def get_jinja_env() -> Environment:
     )
 
 
-def generate_skill_title(memory: MemoryDocument) -> str:
+def generate_description(memory: MemoryDocument, max_length: int = 150) -> str:
     """
-    Generate a human-readable title from memory content.
+    Generate a concise description for the skill from memory content.
+    
+    The description should clearly indicate when to use this skill.
+    It's used by Bob to determine skill relevance.
     
     Args:
         memory: Memory document
+        max_length: Maximum length of description
         
     Returns:
-        Title for the skill
+        Description suitable for YAML front matter (without special chars that need quoting)
         
     Examples:
-        >>> generate_skill_title(memory_with_content("How to add MCP tool: ..."))
-        'How to Add MCP Tool'
+        >>> generate_description(memory_with_content("How to add MCP tool: ..."))
+        'Add MCP tools following the standard implementation pattern'
     """
-    # Take first line or first 60 chars
-    first_line = memory.content.split('\n')[0]
-    if len(first_line) > 60:
-        first_line = first_line[:60].rsplit(' ', 1)[0] + '...'
+    # Get first line or first sentence
+    content = memory.content.strip()
+    first_line = content.split('\n')[0].strip()
     
-    # Remove common prefixes
-    for prefix in ['How to ', 'To ', 'When ', 'If ']:
-        if first_line.startswith(prefix):
-            first_line = prefix + first_line[len(prefix):].capitalize()
-            break
+    # Remove trailing colons (common in procedural memory titles)
+    if first_line.endswith(':'):
+        first_line = first_line[:-1]
+    
+    # Try to get first sentence if it's reasonable length
+    if '.' in first_line and first_line.index('.') < max_length:
+        description = first_line[:first_line.index('.')]
     else:
-        # Capitalize first letter
-        first_line = first_line[0].upper() + first_line[1:] if first_line else 'Unnamed Skill'
+        description = first_line
     
-    return first_line
+    # Remove common procedural prefixes and make it more descriptive
+    prefixes_map = {
+        'How to ': '',
+        'To ': '',
+        'When ': 'Apply when ',
+        'If ': 'Use if ',
+        'Steps to ': '',
+        'Procedure for ': '',
+    }
+    
+    for prefix, replacement in prefixes_map.items():
+        if description.startswith(prefix):
+            description = replacement + description[len(prefix):]
+            break
+    
+    # Ensure first letter is capitalized
+    if description:
+        description = description[0].upper() + description[1:]
+    
+    # Truncate if too long, at word boundary
+    if len(description) > max_length:
+        description = description[:max_length].rsplit(' ', 1)[0]
+        if not description.endswith('.'):
+            description += '...'
+    
+    # Fallback if empty
+    if not description:
+        # Try to create description from tags
+        if memory.tags:
+            description = f"Apply {', '.join(memory.tags[:3])} best practices"
+        else:
+            description = "Procedural knowledge learned from experience"
+    
+    return description
 
 
 def render_skill(memory: MemoryDocument) -> tuple[str, str]:
@@ -114,7 +151,7 @@ def render_skill(memory: MemoryDocument) -> tuple[str, str]:
         >>> print(slug)
         'add-mcp-tool'
         >>> print(content[:50])
-        '# How to Add MCP Tool\n\n> **Auto-generated from...'
+        '---\nname: add-mcp-tool\ndescription: Add MCP...'
     """
     if memory.memory_type != "procedural":
         raise ValueError(f"Can only render procedural memories, got {memory.memory_type}")
@@ -122,8 +159,8 @@ def render_skill(memory: MemoryDocument) -> tuple[str, str]:
     # Generate slug from content
     slug = slugify(memory.content[:50])
     
-    # Generate title
-    title = generate_skill_title(memory)
+    # Generate description for YAML front matter
+    description = generate_description(memory)
     
     # Get Jinja2 environment
     env = get_jinja_env()
@@ -131,8 +168,8 @@ def render_skill(memory: MemoryDocument) -> tuple[str, str]:
     
     # Render template
     content = template.render(
-        title=title,
         slug=slug,
+        description=description,
         memory_id=memory.id,
         content=memory.content,
         tags=memory.tags,

@@ -1,43 +1,38 @@
-# {{ title }}
-
-> **Auto-generated from procedural memory**  
-> **Created**: {{ created_at.strftime('%Y-%m-%d %H:%M:%S UTC') }}  
-> **Importance**: {{ '⭐' * importance }}  
-> **Tags**: {{ tags | join(', ') if tags else 'none' }}  
-> **Memory ID**: `{{ memory_id }}`
-
 ---
-
-## Overview
-
-This skill was learned through experience and automatically exported from AstroBob's procedural memory system.
+name: {{ slug }}
+description: {{ description }}
+---
 
 {{ content }}
 
 ---
 
-## Usage Context
+## Metadata
 
-**When to apply this skill:**
-- When facing similar situations or tasks
-- When the tags above match your current context
-- When you need proven procedures that have worked before
+**Auto-generated from procedural memory**
 
-**Success metrics:**
-- This procedure has been successfully applied **{{ success_count }}** time(s)
-- Last accessed: {{ last_accessed_at.strftime('%Y-%m-%d %H:%M:%S UTC') if last_accessed_at else 'Never' }}
-- Access count: {{ access_count }}
-
----
-
-## Provenance
+- **Memory ID**: `{{ memory_id }}`
+- **Created**: {{ created_at.strftime('%Y-%m-%d %H:%M:%S UTC') }}
+- **Importance**: {{ '⭐' * importance }}
+- **Tags**: {{ tags | join(', ') if tags else 'none' }}
+- **Project**: `{{ project }}`
+- **Scope**: `{{ scope }}`
+- **Confidence**: {{ (confidence * 100) | round(1) }}%
+- **Source**: `{{ source }}`
+- **Success Count**: {{ success_count }}
+- **Access Count**: {{ access_count }}
+- **Last Accessed**: {{ last_accessed_at.strftime('%Y-%m-%d %H:%M:%S UTC') if last_accessed_at else 'Never' }}
+{% if supersedes %}
+- **Supersedes**: `{{ supersedes }}`
+{% endif %}
 
 {% if provenance.derived_from %}
+### Provenance
+
 **Derived from episodes:**
 {% for episode_id in provenance.derived_from %}
 - `{{ episode_id }}`
 {% endfor %}
-{% endif %}
 
 {% if provenance.session_id %}
 **Session**: `{{ provenance.session_id }}`
@@ -46,17 +41,6 @@ This skill was learned through experience and automatically exported from AstroB
 {% if provenance.bob_skill_used %}
 **Created using skill**: `{{ provenance.bob_skill_used }}`
 {% endif %}
-
----
-
-## Metadata
-
-- **Project**: `{{ project }}`
-- **Scope**: `{{ scope }}`
-- **Confidence**: {{ (confidence * 100) | round(1) }}%
-- **Source**: `{{ source }}`
-{% if supersedes %}
-- **Supersedes**: `{{ supersedes }}`
 {% endif %}
 
 ---
