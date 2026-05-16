@@ -1,0 +1,15 @@
+{
+  "mcpServers": {
+    "astrobob": {
+      "command": "{{ python_path }}",
+      "args": [
+        "-m",
+        "astrobob.mcp_server.server"
+      ],
+      "env": {
+        "ASTRA_DB_API_ENDPOINT": "{{ astra_endpoint }}",
+        "ASTRA_DB_APPLICATION_TOKEN": "{{ astra_token }}"
+      }
+    }
+  }
+}

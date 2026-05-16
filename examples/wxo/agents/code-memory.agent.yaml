@@ -1,0 +1,154 @@
+# Code Memory Agent - WxO Agent Configuration
+# 
+# This agent specializes in managing code-related memories using AstroBob.
+# It can store, retrieve, and reflect on coding patterns, bugs, and solutions.
+
+name: code-memory
+version: 1.0.0
+description: |
+  Specialized agent for managing code-related memories in AstroBob.
+  Stores coding patterns, bug fixes, and procedural knowledge.
+
+# Agent Configuration
+config:
+  model: gpt-4
+  temperature: 0.7
+  max_tokens: 2000
+  
+# System Prompt
+system_prompt: |
+  You are a Code Memory Agent specialized in managing programming knowledge.
+  
+  Your responsibilities:
+  1. Store important coding patterns and solutions as procedural memories
+  2. Retrieve relevant past experiences when solving similar problems
+  3. Reflect on multiple related episodes to extract reusable patterns
+  4. Tag memories appropriately (language, framework, pattern type)
+  5. Assess importance (1-5) based on reusability and impact
+  
+  When storing memories:
+  - Use semantic memory for stable facts (e.g., "Project uses FastAPI 0.104")
+  - Use episodic memory for specific events (e.g., "Fixed auth bug on 2024-05-15")
+  - Use procedural memory for reusable how-tos (e.g., "How to add MCP tool")
+  
+  Always include:
+  - Clear, actionable content
+  - Relevant tags (language, framework, pattern)
+  - Appropriate importance level (4-5 for critical patterns)
+  - Context about when/why this knowledge is useful
+
+# Tools Available
+tools:
+  - name: remember
+    description: Store a new memory in AstroBob
+    
+  - name: recall
+    description: Search for relevant memories
+    
+  - name: reflect
+    description: Convert multiple episodes into a procedural memory
+    
+  - name: audit_trail
+    description: View the history of a memory
+
+# Workflow
+workflow:
+  - step: analyze_task
+    description: Understand the coding task or problem
+    
+  - step: recall_relevant
+    description: Search for similar past experiences
+    action: |
+      Use recall() to find memories related to:
+      - Same programming language
+      - Similar framework or library
+      - Related design pattern
+      - Similar problem domain
+    
+  - step: execute_task
+    description: Complete the coding task using recalled knowledge
+    
+  - step: store_learnings
+    description: Store new knowledge gained
+    action: |
+      After completing the task:
+      1. If you discovered a new pattern → procedural memory (importance 4-5)
+      2. If you fixed a bug → episodic memory (importance 3-4)
+      3. If you learned a fact → semantic memory (importance 2-3)
+    
+  - step: reflect_periodically
+    description: Periodically reflect on related episodes
+    action: |
+      When you have 3+ related episodic memories:
+      1. Use reflect() to distill a procedural memory
+      2. Tag with relevant keywords
+      3. Set importance based on reusability
+
+# Example Usage
+examples:
+  - scenario: Adding a new API endpoint
+    steps:
+      - recall: "query='how to add API endpoint', tags=['fastapi', 'rest']"
+      - execute: "Implement endpoint following recalled patterns"
+      - remember: "type='procedural', content='How to add FastAPI endpoint: 1) Define route...' importance=4"
+  
+  - scenario: Debugging authentication issue
+    steps:
+      - recall: "query='authentication bug', tags=['auth', 'jwt']"
+      - execute: "Fix the bug using past solutions"
+      - remember: "type='episodic', content='Fixed JWT expiry bug by...' importance=3"
+  
+  - scenario: Learning from multiple bug fixes
+    steps:
+      - recall: "query='recent auth bugs', memory_type='episodic'"
+      - reflect: "episode_ids=[id1, id2, id3], lesson='Common auth patterns: always validate...'"
+
+# Integration with AstroBob
+astrobob:
+  mcp_server: "astrobob mcp"
+  collections:
+    - semantic_memory
+    - episodic_memory
+    - procedural_memory
+  
+  memory_strategy:
+    semantic:
+      use_for: ["project facts", "library versions", "architecture decisions"]
+      importance_range: [2, 4]
+      
+    episodic:
+      use_for: ["bug fixes", "feature implementations", "debugging sessions"]
+      importance_range: [2, 4]
+      
+    procedural:
+      use_for: ["reusable patterns", "how-to guides", "best practices"]
+      importance_range: [4, 5]
+
+# Performance Metrics
+metrics:
+  - name: memory_reuse_rate
+    description: Percentage of tasks where recalled memories were useful
+    target: "> 60%"
+    
+  - name: procedural_quality
+    description: Average importance of procedural memories created
+    target: ">= 4.0"
+    
+  - name: reflection_frequency
+    description: Number of reflections per 10 episodes
+    target: ">= 1"
+
+# Notes
+notes: |
+  This agent works best when:
+  - Given clear context about the project and tech stack
+  - Allowed to recall before starting non-trivial tasks
+  - Encouraged to reflect after completing related tasks
+  - Provided feedback on memory quality and usefulness
+  
+  Integration with WxO:
+  - Can be supervised by a coordinator agent
+  - Can delegate to specialized sub-agents (e.g., testing, documentation)
+  - Shares memory store with other agents in the system
+
+# Made with Bob

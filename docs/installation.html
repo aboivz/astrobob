@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Install AstroBob - Memory-Powered Agent Toolkit for IBM Bob">
+    <title>Installation - AstroBob Documentation</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <span class="logo-icon">🧠</span>
+                    <span class="logo-text">AstroBob</span>
+                </div>
+                <nav class="main-nav">
+                    <a href="index.html">Home</a>
+                    <a href="quickstart.html">Quick Start</a>
+                    <a href="installation.html" class="active">Installation</a>
+                    <a href="https://github.com/aboivz/astrobob" target="_blank">GitHub</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="docs-layout">
+            <aside class="sidebar">
+                <div class="search-box">
+                    <input type="text" id="searchInput" placeholder="Search docs...">
+                </div>
+                <nav class="sidebar-nav">
+                    <div class="nav-section">
+                        <div class="nav-section-title">Getting Started</div>
+                        <a href="quickstart.html">Quick Start</a>
+                        <a href="installation.html" class="active">Installation</a>
+                    </div>
+                    <div class="nav-section">
+                        <div class="nav-section-title">Usage</div>
+                        <a href="cli-reference.html">CLI Reference</a>
+                        <a href="mcp-tools.html">MCP Tools</a>
+                    </div>
+                    <div class="nav-section">
+                        <div class="nav-section-title">Reference</div>
+                        <a href="troubleshooting.html">Troubleshooting</a>
+                        <a href="faq.html">FAQ</a>
+                    </div>
+                </nav>
+            </aside>
+
+            <main class="content">
+            <h1>Installation</h1>
+            
+            <p class="lead">
+                Get AstroBob installed and running in under 5 minutes. Choose your preferred installation method below.
+            </p>
+
+            <div class="alert alert-info">
+                <strong>📋 Prerequisites:</strong><br>
+                • Python 3.12 or higher<br>
+                • AstraDB Serverless account (free tier available)<br>
+                • IBM Bob trial or subscription (optional, for MCP integration)
+            </div>
+
+            <h2>Installation Methods</h2>
+
+            <h3>Method 1: Using uv (Recommended)</h3>
+            
+            <p><code>uv</code> is the fastest and most modern Python package installer. Perfect for quick installations.</p>
+
+            <pre><code class="language-bash"># Install uv if you don't have it
+curl -LsSf https://astral.sh/uv/install.sh | sh
+
+# Install AstroBob as a tool
+uv tool install astrobob
+
+# Verify installation
+astrobob --version</code></pre>
+
+            <div class="alert alert-success">
+                <strong>✅ Recommended:</strong> This method installs AstroBob in an isolated environment and makes the <code>astrobob</code> command globally available.
+            </div>
+
+            <h3>Method 2: Using pipx</h3>
+            
+            <p><code>pipx</code> installs Python applications in isolated environments, similar to <code>uv tool</code>.</p>
+
+            <pre><code class="language-bash"># Install pipx if you don't have it
+python -m pip install --user pipx
+python -m pipx ensurepath
+
+# Install AstroBob
+pipx install astrobob
+
+# Verify installation
+astrobob --version</code></pre>
+
+            <h3>Method 3: From Source (Development)</h3>
+            
+            <p>Install from the GitHub repository for the latest development version or to contribute.</p>
+
+            <pre><code class="language-bash"># Clone the repository
+git clone https://github.com/aboivz/astrobob.git
+cd astrobob
+
+# Install with uv (recommended)
+uv sync
+
+# Or install with pip
+pip install -e .
+
+# Verify installation
+astrobob --version</code></pre>
+
+            <h3>Method 4: Direct pip Install</h3>
+            
+            <p>Standard pip installation from GitHub.</p>
+
+            <pre><code class="language-bash"># Install directly from GitHub
+pip install git+https://github.com/aboivz/astrobob.git
+
+# Verify installation
+astrobob --version</code></pre>
+
+            <h2>System Requirements</h2>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Component</th>
+                        <th>Requirement</th>
+                        <th>Notes</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Python</strong></td>
+                        <td>3.12+</td>
+                        <td>Required for type hints and modern features</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Operating System</strong></td>
+                        <td>Windows, macOS, Linux</td>
+                        <td>Cross-platform compatible</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Memory</strong></td>
+                        <td>512 MB RAM minimum</td>
+                        <td>1 GB+ recommended for large projects</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Disk Space</strong></td>
+                        <td>100 MB</td>
+                        <td>For installation and dependencies</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Network</strong></td>
+                        <td>Internet connection</td>
+                        <td>Required for AstraDB connectivity</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h2>Dependencies</h2>
+
+            <p>AstroBob automatically installs these core dependencies:</p>
+
+            <pre><code class="language-bash">mcp[cli]>=1.0.0          # Model Context Protocol
+astrapy>=2.0.0           # AstraDB Python client
+typer>=0.12.0            # CLI framework
+rich>=13.0.0             # Terminal formatting
+pydantic>=2.0.0          # Data validation
+python-dotenv>=1.0.0     # Environment variables
+python-ulid>=2.0.0       # Unique identifiers
+jinja2>=3.1.0            # Template rendering</code></pre>
+
+            <h3>Optional Development Dependencies</h3>
+
+            <p>For development and testing:</p>
+
+            <pre><code class="language-bash"># Install with dev dependencies
+uv sync --all-extras
+
+# Or with pip
+pip install astrobob[dev]</code></pre>
+
+            <p>Development dependencies include:</p>
+            <ul>
+                <li><code>pytest>=8.0.0</code> - Testing framework</li>
+                <li><code>pytest-asyncio>=0.23.0</code> - Async test support</li>
+                <li><code>ruff>=0.4.0</code> - Linting and formatting</li>
+                <li><code>mypy>=1.10.0</code> - Type checking</li>
+            </ul>
+
+            <h2>Verifying Installation</h2>
+
+            <p>After installation, verify that AstroBob is working correctly:</p>
+
+            <pre><code class="language-bash"># Check version
+astrobob --version
+
+# View help
+astrobob --help
+
+# List available commands
+astrobob
+
+# Run health check (requires configuration)
+astrobob doctor</code></pre>
+
+            <p>Expected output:</p>
+
+            <pre><code class="language-bash">$ astrobob --version
+astrobob version 0.1.0
+
+$ astrobob --help
+Usage: astrobob [OPTIONS] COMMAND [ARGS]...
+
+  AstroBob - Memory-Powered Agent Toolkit for IBM Bob
+
+Commands:
+  astra    Manage AstraDB collections
+  doctor   Run health checks
+  init     Initialize AstroBob in current project
+  mcp      Start MCP server
+  memory   Manage memories
+  skills   Manage Bob skills</code></pre>
+
+            <h2>Upgrading AstroBob</h2>
+
+            <h3>Using uv</h3>
+            <pre><code class="language-bash">uv tool upgrade astrobob</code></pre>
+
+            <h3>Using pipx</h3>
+            <pre><code class="language-bash">pipx upgrade astrobob</code></pre>
+
+            <h3>Using pip</h3>
+            <pre><code class="language-bash">pip install --upgrade astrobob</code></pre>
+
+            <h2>Uninstalling AstroBob</h2>
+
+            <h3>Using uv</h3>
+            <pre><code class="language-bash">uv tool uninstall astrobob</code></pre>
+
+            <h3>Using pipx</h3>
+            <pre><code class="language-bash">pipx uninstall astrobob</code></pre>
+
+            <h3>Using pip</h3>
+            <pre><code class="language-bash">pip uninstall astrobob</code></pre>
+
+            <h2>Troubleshooting Installation</h2>
+
+            <h3>Python Version Issues</h3>
+            
+            <div class="alert alert-warning">
+                <strong>⚠️ Error:</strong> <code>Python 3.12 or higher is required</code>
+            </div>
+
+            <p><strong>Solution:</strong> Install Python 3.12+ from <a href="https://www.python.org/downloads/" target="_blank">python.org</a> or use a version manager like <code>pyenv</code>:</p>
+
+            <pre><code class="language-bash"># Using pyenv
+pyenv install 3.12
+pyenv global 3.12</code></pre>
+
+            <h3>Permission Errors</h3>
+            
+            <div class="alert alert-warning">
+                <strong>⚠️ Error:</strong> <code>Permission denied</code>
+            </div>
+
+            <p><strong>Solution:</strong> Use <code>--user</code> flag or a virtual environment:</p>
+
+            <pre><code class="language-bash"># Install for current user only
+pip install --user astrobob
+
+# Or use a virtual environment
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+pip install astrobob</code></pre>
+
+            <h3>Command Not Found</h3>
+            
+            <div class="alert alert-warning">
+                <strong>⚠️ Error:</strong> <code>astrobob: command not found</code>
+            </div>
+
+            <p><strong>Solution:</strong> Ensure the installation directory is in your PATH:</p>
+
+            <pre><code class="language-bash"># For uv tool
+export PATH="$HOME/.local/bin:$PATH"
+
+# For pipx
+pipx ensurepath
+
+# Then restart your terminal</code></pre>
+
+            <h3>Dependency Conflicts</h3>
+            
+            <div class="alert alert-warning">
+                <strong>⚠️ Error:</strong> <code>Dependency resolution failed</code>
+            </div>
+
+            <p><strong>Solution:</strong> Use an isolated environment:</p>
+
+            <pre><code class="language-bash"># Recommended: Use uv tool or pipx (already isolated)
+uv tool install astrobob
+
+# Or create a fresh virtual environment
+python -m venv astrobob-env
+source astrobob-env/bin/activate
+pip install astrobob</code></pre>
+
+            <h2>Platform-Specific Notes</h2>
+
+            <h3>Windows</h3>
+            <ul>
+                <li>Use PowerShell or Command Prompt</li>
+                <li>Activate virtual environments with <code>venv\Scripts\activate</code></li>
+                <li>Path separator is <code>;</code> instead of <code>:</code></li>
+            </ul>
+
+            <h3>macOS</h3>
+            <ul>
+                <li>May need to use <code>python3</code> and <code>pip3</code> explicitly</li>
+                <li>Homebrew Python recommended: <code>brew install python@3.12</code></li>
+                <li>Add to PATH: <code>export PATH="/usr/local/opt/python@3.12/bin:$PATH"</code></li>
+            </ul>
+
+            <h3>Linux</h3>
+            <ul>
+                <li>Install Python 3.12 from your distribution's package manager</li>
+                <li>Ubuntu/Debian: <code>sudo apt install python3.12 python3.12-venv</code></li>
+                <li>Fedora: <code>sudo dnf install python3.12</code></li>
+                <li>Arch: <code>sudo pacman -S python</code></li>
+            </ul>
+
+            <h2>Next Steps</h2>
+
+            <p>Now that AstroBob is installed, you're ready to:</p>
+
+            <ol style="font-size: 1.0625rem; line-height: 1.8;">
+                <li><strong><a href="configuration.html">Configure AstraDB</a></strong> - Set up your database credentials</li>
+                <li><strong><a href="quickstart.html">Follow the Quick Start</a></strong> - Store your first memory</li>
+                <li><strong><a href="bob-integration.html">Integrate with Bob</a></strong> - Connect Bob to AstroBob</li>
+            </ol>
+
+            <div class="alert alert-success" style="margin-top: var(--spacing-2xl);">
+                <strong>🎉 Installation Complete!</strong><br>
+                Continue to <a href="quickstart.html">Quick Start</a> to set up your AstraDB credentials and store your first memory.
+            </div>
+
+            <div class="nav-footer">
+                <a href="index.html" class="nav-prev">← Home</a>
+                <a href="quickstart.html" class="nav-next">Quick Start →</a>
+            </div>
+        </main>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 AstroBob. Open source under MIT License.</p>
+            <p>
+                <a href="https://github.com/aboivz/astrobob">GitHub</a> •
+                <a href="https://github.com/aboivz/astrobob/issues">Issues</a> •
+                <a href="https://github.com/aboivz/astrobob/blob/main/LICENSE">License</a>
+            </p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+    <script src="search.js"></script>
+</body>
+</html>

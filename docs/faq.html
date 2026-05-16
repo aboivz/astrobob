@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FAQ - AstroBob Documentation</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <span class="logo-icon">🧠</span>
+                    <span class="logo-text">AstroBob</span>
+                </div>
+                <nav class="main-nav">
+                    <a href="index.html">Home</a>
+                    <a href="quickstart.html">Quick Start</a>
+                    <a href="installation.html">Installation</a>
+                    <a href="https://github.com/aboivz/astrobob" target="_blank">GitHub</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="docs-layout">
+            <aside class="sidebar">
+                <div class="search-box">
+                    <input type="text" id="searchInput" placeholder="Search docs...">
+                </div>
+                <nav class="sidebar-nav">
+                    <div class="nav-section">
+                        <div class="nav-section-title">Getting Started</div>
+                        <a href="quickstart.html">Quick Start</a>
+                        <a href="installation.html">Installation</a>
+                    </div>
+                    <div class="nav-section">
+                        <div class="nav-section-title">Usage</div>
+                        <a href="cli-reference.html">CLI Reference</a>
+                        <a href="mcp-tools.html">MCP Tools</a>
+                    </div>
+                    <div class="nav-section">
+                        <div class="nav-section-title">Reference</div>
+                        <a href="troubleshooting.html">Troubleshooting</a>
+                        <a href="faq.html" class="active">FAQ</a>
+                    </div>
+                </nav>
+            </aside>
+
+            <main class="content">
+                <h1>Frequently Asked Questions</h1>
+                <p class="lead">Common questions about AstroBob and their answers.</p>
+
+                <h2 id="general">General Questions</h2>
+
+                <h3>What is AstroBob?</h3>
+                <p>AstroBob is a memory-powered agent toolkit that gives IBM Bob (and other AI agents) persistent semantic, episodic, and procedural memory via AstraDB. It allows agents to remember facts, past experiences, and learned procedures across sessions.</p>
+
+                <h3>Why do I need AstroBob?</h3>
+                <p>AI agents like Bob typically forget everything between sessions. AstroBob solves this by providing:</p>
+                <ul>
+                    <li><strong>Persistent memory:</strong> Remembers across sessions</li>
+                    <li><strong>Smart retrieval:</strong> Hybrid search with reranking</li>
+                    <li><strong>Self-improvement:</strong> Learns from experience and writes its own skills</li>
+                    <li><strong>Provenance tracking:</strong> Full audit trail of what was learned and when</li>
+                </ul>
+
+                <h3>Is AstroBob free?</h3>
+                <p>Yes! AstroBob is open source (MIT license). AstraDB offers a generous free tier that's sufficient for most individual use cases. You only pay if you exceed the free tier limits.</p>
+
+                <h3>What's the difference between AstroBob and RAG?</h3>
+                <p>RAG (Retrieval-Augmented Generation) typically retrieves from static documents. AstroBob provides <strong>dynamic, evolving memory</strong> that agents can write to, update, and learn from. It's designed for agent memory, not document search.</p>
+
+                <h3>Can I use AstroBob without IBM Bob?</h3>
+                <p>Yes! AstroBob provides:</p>
+                <ul>
+                    <li><strong>CLI:</strong> Use directly from command line</li>
+                    <li><strong>MCP Server:</strong> Works with any MCP-compatible client (Claude Desktop, etc.)</li>
+                    <li><strong>Python API:</strong> Import and use in your own code</li>
+                    <li><strong>WxO Integration:</strong> Use with IBM WxO multi-agent systems</li>
+                </ul>
+
+                <hr>
+
+                <h2 id="memory-types">Memory Types</h2>
+
+                <h3>What are the three memory types?</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Type</th>
+                            <th>Purpose</th>
+                            <th>Example</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Semantic</strong></td>
+                            <td>Facts and knowledge</td>
+                            <td>"Project uses FastAPI 0.104"</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Episodic</strong></td>
+                            <td>Events and experiences</td>
+                            <td>"Fixed auth bug on 2026-05-15"</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Procedural</strong></td>
+                            <td>How-to procedures</td>
+                            <td>"To add API endpoint: 1) ..."</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>When should I use each memory type?</h3>
+                <ul>
+                    <li><strong>Semantic:</strong> For stable facts that don't change often (architecture decisions, dependencies, conventions)</li>
+                    <li><strong>Episodic:</strong> For things that happened (bug fixes, features added, decisions made)</li>
+                    <li><strong>Procedural:</strong> For reusable step-by-step procedures (how to add a feature, debug a problem)</li>
+                </ul>
+
+                <h3>Can I convert episodic memories to procedural?</h3>
+                <p>Yes! That's what the <code>reflect()</code> tool is for. After solving similar problems 2-3 times, use <code>reflect()</code> to distill the pattern into a reusable procedure.</p>
+
+                <h3>What's the difference between semantic and procedural?</h3>
+                <ul>
+                    <li><strong>Semantic:</strong> "What is" (declarative knowledge) - "The API uses JWT tokens"</li>
+                    <li><strong>Procedural:</strong> "How to" (actionable steps) - "To authenticate: 1) Get token 2) Add to header 3) ..."</li>
+                </ul>
+
+                <hr>
+
+                <h2 id="usage">Usage Questions</h2>
+
+                <h3>How do I know what to remember?</h3>
+                <p>Remember things that:</p>
+                <ul>
+                    <li>✅ You'll need to reference later</li>
+                    <li>✅ Are project-specific conventions</li>
+                    <li>✅ Took time to figure out</li>
+                    <li>✅ You might forget</li>
+                    <li>❌ Are obvious or well-documented</li>
+                    <li>❌ Change frequently</li>
+                    <li>❌ Are temporary state</li>
+                </ul>
+
+                <h3>How many memories should I store?</h3>
+                <p>There's no hard limit, but quality > quantity. Focus on:</p>
+                <ul>
+                    <li><strong>10-20 semantic memories</strong> per project (key facts)</li>
+                    <li><strong>50-100 episodic memories</strong> (significant events)</li>
+                    <li><strong>5-15 procedural memories</strong> (core procedures)</li>
+                </ul>
+
+                <h3>Should Bob remember everything it does?</h3>
+                <p>No! Be selective. Remember:</p>
+                <ul>
+                    <li>✅ Non-trivial tasks (importance 3+)</li>
+                    <li>✅ Discoveries and learnings</li>
+                    <li>✅ Patterns that might repeat</li>
+                    <li>❌ Simple file edits</li>
+                    <li>❌ Routine operations</li>
+                    <li>❌ Obvious steps</li>
+                </ul>
+
+                <h3>How do I organize memories across projects?</h3>
+                <p>AstroBob automatically scopes memories by project (current directory name). You can also:</p>
+                <ul>
+                    <li>Use <code>--project</code> flag to specify explicitly</li>
+                    <li>Use tags for cross-project concepts</li>
+                    <li>Set <code>ASTROBOB_PROJECT</code> environment variable</li>
+                    <li>Use different collection prefixes for complete isolation</li>
+                </ul>
+
+                <h3>Can I share memories with my team?</h3>
+                <p>Yes! Options:</p>
+                <ol>
+                    <li><strong>Shared AstraDB:</strong> Team uses same database (share credentials securely)</li>
+                    <li><strong>Export/Import:</strong> Export memories as JSON, commit to git</li>
+                    <li><strong>Skills:</strong> Export procedural memories as SKILL.md files, commit to <code>.bob/skills/</code></li>
+                </ol>
+
+                <hr>
+
+                <h2 id="technical">Technical Questions</h2>
+
+                <h3>How does hybrid search work?</h3>
+                <p>AstroBob uses AstraDB's hybrid search which combines:</p>
+                <ol>
+                    <li><strong>Vector search:</strong> Semantic similarity using embeddings</li>
+                    <li><strong>Keyword search:</strong> Traditional text matching</li>
+                    <li><strong>Reranking:</strong> AI-powered result reordering</li>
+                </ol>
+                <p>Results are then scored using importance, recency, and success rate.</p>
+
+                <h3>What embedding model is used?</h3>
+                <p>NVIDIA NV-Embed-QA-E5-V5, hosted by AstraDB. No API keys needed - it's built into AstraDB's vectorize service.</p>
+
+                <h3>How is data stored?</h3>
+                <p>Three collections in AstraDB:</p>
+                <ul>
+                    <li><code>astrobob_semantic_memory</code></li>
+                    <li><code>astrobob_episodic_memory</code></li>
+                    <li><code>astrobob_procedural_memory</code></li>
+                </ul>
+                <p>Each uses the same schema with vector indexing, lexical search, and reranking enabled.</p>
+
+                <h3>Is my data secure?</h3>
+                <p>Yes:</p>
+                <ul>
+                    <li>Data stored in your AstraDB account (you control access)</li>
+                    <li>Encrypted in transit (HTTPS) and at rest</li>
+                    <li>Tokens never logged or exposed</li>
+                    <li>No data sent to third parties</li>
+                </ul>
+
+                <h3>What's the performance like?</h3>
+                <p>Typical latencies:</p>
+                <ul>
+                    <li><strong>Write (remember):</strong> 50-150ms</li>
+                    <li><strong>Read (recall):</strong> 100-300ms</li>
+                    <li><strong>Hybrid search:</strong> 200-500ms</li>
+                </ul>
+                <p>Performance depends on AstraDB region and network latency.</p>
+
+                <h3>Can I use a different vector database?</h3>
+                <p>Currently AstroBob is designed for AstraDB. Support for other databases (Pinecone, Weaviate, etc.) could be added in future versions. Contributions welcome!</p>
+
+                <h3>What's the difference between STDIO and HTTP mode?</h3>
+                <ul>
+                    <li><strong>STDIO:</strong> For Bob integration (default). Bob communicates via stdin/stdout.</li>
+                    <li><strong>HTTP:</strong> For debugging with MCP Inspector or other HTTP clients. Runs on port 8765.</li>
+                </ul>
+
+                <hr>
+
+                <h2 id="bob-integration">Bob Integration</h2>
+
+                <h3>Does Bob automatically use AstroBob?</h3>
+                <p>No. Bob needs to be explicitly told to use MCP tools. Best practices:</p>
+                <ul>
+                    <li>Use the "AstroBob Builder" custom mode (created by <code>astrobob init</code>)</li>
+                    <li>Explicitly ask Bob to "check memory first"</li>
+                    <li>Use Bob skills that reference AstroBob tools</li>
+                </ul>
+
+                <h3>Can Bob decide when to remember things?</h3>
+                <p>Yes! Bob can autonomously call <code>remember()</code> when it learns something important. The "AstroBob Builder" mode encourages this behavior.</p>
+
+                <h3>How do I teach Bob to use AstroBob effectively?</h3>
+                <ol>
+                    <li>Use the provided Bob skills (in <code>.bob/skills/</code>)</li>
+                    <li>Give explicit instructions: "Check memory before starting"</li>
+                    <li>Provide examples in custom modes</li>
+                    <li>Let Bob learn by doing - it will improve over time</li>
+                </ol>
+
+                <h3>Can multiple Bob instances share memory?</h3>
+                <p>Yes! If they use the same AstraDB database and project name, they'll share memories. Useful for team collaboration.</p>
+
+                <hr>
+
+                <h2 id="skills">Skills Export</h2>
+
+                <h3>What are "learned skills"?</h3>
+                <p>Procedural memories exported as native Bob SKILL.md files. Bob can use these directly without calling MCP tools.</p>
+
+                <h3>When should I export skills?</h3>
+                <p>Export when:</p>
+                <ul>
+                    <li>You have stable, high-value procedures (importance 4-5)</li>
+                    <li>You want Bob to use procedures without MCP overhead</li>
+                    <li>You want to commit procedures to git for team sharing</li>
+                </ul>
+
+                <h3>What's the difference between MCP tools and skills?</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Aspect</th>
+                            <th>MCP Tools</th>
+                            <th>Skills</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Storage</strong></td>
+                            <td>AstraDB (dynamic)</td>
+                            <td>Files (static)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Updates</strong></td>
+                            <td>Real-time</td>
+                            <td>Manual re-export</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Search</strong></td>
+                            <td>Hybrid search</td>
+                            <td>Bob's skill matching</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Use Case</strong></td>
+                            <td>Evolving knowledge</td>
+                            <td>Stable procedures</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>Can I edit exported skills?</h3>
+                <p>Yes! They're just markdown files in <code>.bob/skills/learned/</code>. Edit as needed. Note: Changes won't sync back to AstraDB.</p>
+
+                <hr>
+
+                <h2 id="costs">Costs & Limits</h2>
+
+                <h3>How much does AstraDB cost?</h3>
+                <p>Free tier includes:</p>
+                <ul>
+                    <li>25 GB storage</li>
+                    <li>5 million reads/month</li>
+                    <li>1 million writes/month</li>
+                    <li>Unlimited vector searches</li>
+                </ul>
+                <p>This is typically enough for individual use. See <a href="https://www.datastax.com/products/datastax-astra/pricing" target="_blank">AstraDB pricing</a> for paid tiers.</p>
+
+                <h3>How many memories fit in the free tier?</h3>
+                <p>Rough estimates:</p>
+                <ul>
+                    <li><strong>~100,000 memories</strong> in 25 GB (assuming ~250 KB per memory with vectors)</li>
+                    <li><strong>~1,000 writes/day</strong> within free tier</li>
+                    <li><strong>~150,000 reads/day</strong> within free tier</li>
+                </ul>
+
+                <h3>What happens if I exceed free tier?</h3>
+                <p>AstraDB will prompt you to upgrade. You can also:</p>
+                <ul>
+                    <li>Clean up old memories with <code>forget()</code></li>
+                    <li>Archive to JSON and delete</li>
+                    <li>Use separate databases per project</li>
+                </ul>
+
+                <hr>
+
+                <h2 id="comparison">Comparisons</h2>
+
+                <h3>AstroBob vs. LangChain Memory</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Feature</th>
+                            <th>AstroBob</th>
+                            <th>LangChain Memory</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Memory Types</strong></td>
+                            <td>3 types (semantic, episodic, procedural)</td>
+                            <td>Conversation buffer</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Persistence</strong></td>
+                            <td>AstraDB (permanent)</td>
+                            <td>In-memory or simple DB</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Search</strong></td>
+                            <td>Hybrid + reranking</td>
+                            <td>Basic vector search</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Bob Integration</strong></td>
+                            <td>Native MCP</td>
+                            <td>Requires custom code</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Skills Export</strong></td>
+                            <td>Yes</td>
+                            <td>No</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>AstroBob vs. MemGPT</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Feature</th>
+                            <th>AstroBob</th>
+                            <th>MemGPT</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Focus</strong></td>
+                            <td>Agent toolkit</td>
+                            <td>Autonomous agent</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Memory Model</strong></td>
+                            <td>3 explicit types</td>
+                            <td>Core + archival</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Integration</strong></td>
+                            <td>Works with any MCP client</td>
+                            <td>Standalone system</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Use Case</strong></td>
+                            <td>Augment existing agents</td>
+                            <td>Build new agents</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <hr>
+
+                <h2 id="advanced">Advanced Usage</h2>
+
+                <h3>Can I use AstroBob programmatically?</h3>
+                <p>Yes! Import the Python API:</p>
+                <pre><code class="language-python">from astrobob.core.store import MemoryStore
+from astrobob.core.retriever import Retriever
+from astrobob.astra.client import AstraClient
+from astrobob.config import Config
+
+config = Config()
+client = AstraClient(config)
+store = MemoryStore(client.get_database(), config.collection_prefix)
+
+# Store memory
+memory = MemoryDocument(...)
+store.insert(memory)
+
+# Retrieve
+retriever = Retriever(store)
+results = retriever.search("query")</code></pre>
+
+                <h3>Can I customize the ranking algorithm?</h3>
+                <p>Yes! Edit <code>src/astrobob/core/ranking.py</code> and adjust the weights in the <code>calculate_score()</code> function.</p>
+
+                <h3>Can I add custom memory types?</h3>
+                <p>Not currently. The three types (semantic, episodic, procedural) are core to the design. However, you can use tags to create sub-categories.</p>
+
+                <h3>Can I use AstroBob with WxO?</h3>
+                <p>Yes! See <code>examples/wxo/</code> for templates. AstroBob can be used as a tool in WxO multi-agent systems.</p>
+
+                <hr>
+
+                <h2 id="contributing">Contributing</h2>
+
+                <h3>How can I contribute?</h3>
+                <p>Contributions welcome!</p>
+                <ul>
+                    <li><strong>Code:</strong> Submit PRs on <a href="https://github.com/aboivz/astrobob" target="_blank">GitHub</a></li>
+                    <li><strong>Documentation:</strong> Improve docs, add examples</li>
+                    <li><strong>Bug reports:</strong> File issues with reproduction steps</li>
+                    <li><strong>Feature requests:</strong> Suggest improvements</li>
+                    <li><strong>Community:</strong> Help others in Discord/Slack</li>
+                </ul>
+
+                <h3>What's the roadmap?</h3>
+                <p>Planned features:</p>
+                <ul>
+                    <li>Working memory (short-term, session-scoped)</li>
+                    <li>Memory consolidation (automatic cleanup)</li>
+                    <li>Multi-database support (Pinecone, Weaviate)</li>
+                    <li>Web UI for memory management</li>
+                    <li>Team collaboration features</li>
+                    <li>Memory analytics and insights</li>
+                </ul>
+
+                <h3>Is there a community?</h3>
+                <p>Join us:</p>
+                <ul>
+                    <li><strong>GitHub:</strong> <a href="https://github.com/aboivz/astrobob" target="_blank">github.com/aboivz/astrobob</a></li>
+                    <li><strong>Discord:</strong> lablab.ai community</li>
+                    <li><strong>Slack:</strong> IBM Community</li>
+                </ul>
+
+                <hr>
+
+                <h2 id="still-have-questions">Still Have Questions?</h2>
+
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <h3>📖 Documentation</h3>
+                        <p>Check the <a href="index.html">full documentation</a></p>
+                    </div>
+
+                    <div class="feature-card">
+                        <h3>🔧 Troubleshooting</h3>
+                        <p>See the <a href="troubleshooting.html">troubleshooting guide</a></p>
+                    </div>
+
+                    <div class="feature-card">
+                        <h3>💬 Community</h3>
+                        <p>Ask in Discord or Slack</p>
+                    </div>
+
+                    <div class="feature-card">
+                        <h3>🐛 GitHub</h3>
+                        <p><a href="https://github.com/aboivz/astrobob/issues" target="_blank">File an issue</a></p>
+                    </div>
+                </div>
+
+                <div class="nav-footer">
+                    <a href="troubleshooting.html" class="nav-prev">← Troubleshooting</a>
+                    <a href="index.html" class="nav-next">Home →</a>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 AstroBob. Open source under MIT License.</p>
+            <p>
+                <a href="https://github.com/aboivz/astrobob">GitHub</a> •
+                <a href="https://github.com/aboivz/astrobob/issues">Issues</a> •
+                <a href="https://github.com/aboivz/astrobob/blob/main/LICENSE">License</a>
+            </p>
+        </div>
+    </footer>
+
+    <script src="search.js"></script>
+</body>
+</html>

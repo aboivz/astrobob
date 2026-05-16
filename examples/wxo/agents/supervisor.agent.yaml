@@ -1,0 +1,271 @@
+# Supervisor Agent - WxO Multi-Agent Coordinator
+#
+# This agent coordinates multiple specialized agents and manages
+# the shared AstroBob memory system.
+
+name: supervisor
+version: 1.0.0
+description: |
+  Coordinator agent that manages multiple specialized agents
+  and orchestrates their access to shared AstroBob memory.
+
+# Agent Configuration
+config:
+  model: gpt-4
+  temperature: 0.3  # Lower temperature for more consistent coordination
+  max_tokens: 3000
+  
+# System Prompt
+system_prompt: |
+  You are a Supervisor Agent coordinating a team of specialized agents.
+  
+  Your responsibilities:
+  1. Decompose complex tasks into subtasks for specialized agents
+  2. Coordinate memory access across agents
+  3. Ensure knowledge sharing through AstroBob
+  4. Monitor agent performance and memory quality
+  5. Trigger reflections when patterns emerge across agents
+  
+  Available Specialized Agents:
+  - code-memory: Manages coding knowledge and patterns
+  - test-agent: Handles testing strategies and test cases
+  - doc-agent: Maintains documentation and API specs
+  - debug-agent: Specializes in debugging and troubleshooting
+  
+  Memory Coordination Strategy:
+  - Each agent stores memories in shared AstroBob collections
+  - Use project-scoped memories for team-wide knowledge
+  - Use user-scoped memories for agent-specific preferences
+  - Trigger cross-agent reflections when 5+ related episodes exist
+  
+  Decision Framework:
+  1. Analyze incoming task
+  2. Check if relevant memories exist (recall)
+  3. Assign to appropriate specialized agent(s)
+  4. Monitor progress and memory creation
+  5. Coordinate reflections across agent boundaries
+  6. Store high-level learnings about task decomposition
+
+# Tools Available
+tools:
+  - name: remember
+    description: Store supervisor-level memories (task decomposition patterns)
+    
+  - name: recall
+    description: Search across all agent memories
+    
+  - name: reflect
+    description: Create cross-agent procedural memories
+    
+  - name: audit_trail
+    description: Track memory provenance across agents
+    
+  - name: delegate_task
+    description: Assign subtask to specialized agent
+    
+  - name: aggregate_results
+    description: Combine results from multiple agents
+
+# Workflow
+workflow:
+  - step: receive_task
+    description: Receive high-level task from user
+    
+  - step: recall_similar_tasks
+    description: Check if similar tasks were handled before
+    action: |
+      recall(
+        query="task decomposition for [task_type]",
+        memory_type="procedural",
+        scope="project"
+      )
+    
+  - step: decompose_task
+    description: Break down into subtasks for specialized agents
+    action: |
+      Based on recalled patterns:
+      1. Identify required agent capabilities
+      2. Define subtask boundaries
+      3. Determine memory sharing requirements
+      4. Set coordination checkpoints
+    
+  - step: delegate_subtasks
+    description: Assign subtasks to specialized agents
+    action: |
+      For each subtask:
+      1. Select appropriate agent
+      2. Provide context from shared memory
+      3. Set memory tagging requirements
+      4. Define success criteria
+    
+  - step: monitor_progress
+    description: Track agent progress and memory creation
+    action: |
+      Monitor:
+      - Subtask completion status
+      - Memory quality (importance, tags, content)
+      - Cross-agent dependencies
+      - Emerging patterns
+    
+  - step: coordinate_reflection
+    description: Trigger reflections when patterns emerge
+    action: |
+      When detecting patterns:
+      1. Identify related episodes across agents
+      2. Use reflect() to create cross-agent procedural memory
+      3. Tag with all involved agents
+      4. Set high importance (4-5) for team-wide patterns
+    
+  - step: aggregate_and_store
+    description: Combine results and store supervisor learnings
+    action: |
+      remember(
+        type="procedural",
+        content="Task decomposition pattern for [task_type]: ...",
+        tags=["coordination", "task-decomposition", task_type],
+        importance=4,
+        source="supervisor"
+      )
+
+# Agent Coordination Patterns
+coordination_patterns:
+  sequential:
+    description: Agents work in sequence, passing results
+    example: "code-memory → test-agent → doc-agent"
+    memory_strategy: "Each agent recalls previous agent's outputs"
+    
+  parallel:
+    description: Agents work independently on separate subtasks
+    example: "code-memory + doc-agent (simultaneously)"
+    memory_strategy: "Shared project context, independent episode creation"
+    
+  collaborative:
+    description: Agents work together on same subtask
+    example: "code-memory + debug-agent (pair programming)"
+    memory_strategy: "Shared episode with multiple agent tags"
+
+# Memory Management
+memory_management:
+  scoping_rules:
+    project_scope:
+      use_for: ["team-wide patterns", "architecture decisions", "shared conventions"]
+      created_by: ["supervisor", "any agent with team impact"]
+      
+    user_scope:
+      use_for: ["agent preferences", "specialized techniques", "agent-specific learnings"]
+      created_by: ["specialized agents"]
+      
+    global_scope:
+      use_for: ["universal best practices", "language-agnostic patterns"]
+      created_by: ["supervisor after cross-project reflection"]
+  
+  quality_control:
+    - rule: "Reject memories with importance < 2"
+    - rule: "Require at least 2 tags per memory"
+    - rule: "Enforce clear, actionable content"
+    - rule: "Trigger reflection after 5 related episodes"
+  
+  cleanup_strategy:
+    - "Soft-delete superseded memories"
+    - "Archive low-access memories after 90 days"
+    - "Consolidate duplicate procedural memories"
+
+# Example Scenarios
+examples:
+  - scenario: Building a new feature
+    task: "Add user authentication to API"
+    decomposition:
+      - subtask: "Design auth flow"
+        agent: "code-memory"
+        memory_action: "Recall auth patterns, store design decisions"
+      - subtask: "Implement auth endpoints"
+        agent: "code-memory"
+        memory_action: "Store implementation procedure"
+      - subtask: "Write auth tests"
+        agent: "test-agent"
+        memory_action: "Store test patterns"
+      - subtask: "Document auth API"
+        agent: "doc-agent"
+        memory_action: "Store API documentation"
+    coordination:
+      - "code-memory shares design with test-agent"
+      - "test-agent shares test cases with doc-agent"
+      - "supervisor reflects on full auth implementation pattern"
+  
+  - scenario: Debugging production issue
+    task: "Fix memory leak in production"
+    decomposition:
+      - subtask: "Analyze symptoms"
+        agent: "debug-agent"
+        memory_action: "Recall similar memory leak patterns"
+      - subtask: "Identify root cause"
+        agent: "code-memory + debug-agent"
+        memory_action: "Collaborative episode creation"
+      - subtask: "Implement fix"
+        agent: "code-memory"
+        memory_action: "Store fix procedure"
+      - subtask: "Add regression tests"
+        agent: "test-agent"
+        memory_action: "Store test for memory leak detection"
+    coordination:
+      - "All agents tag with 'memory-leak' for future recall"
+      - "Supervisor creates procedural memory for debugging memory leaks"
+
+# Performance Metrics
+metrics:
+  - name: task_decomposition_accuracy
+    description: Percentage of tasks correctly decomposed
+    target: "> 85%"
+    
+  - name: cross_agent_memory_reuse
+    description: How often agents reuse other agents' memories
+    target: "> 40%"
+    
+  - name: reflection_quality
+    description: Average importance of supervisor-triggered reflections
+    target: ">= 4.5"
+    
+  - name: coordination_overhead
+    description: Time spent on coordination vs execution
+    target: "< 20%"
+
+# Integration with AstroBob
+astrobob:
+  mcp_server: "astrobob mcp"
+  
+  memory_access:
+    read: "All agents can read all memories"
+    write: "Agents write to their own scope by default"
+    reflect: "Supervisor can reflect across all agent memories"
+  
+  tagging_convention:
+    required_tags:
+      - agent_name: "Which agent created this memory"
+      - task_type: "Category of task (feature, bug, refactor, etc.)"
+    optional_tags:
+      - language: "Programming language"
+      - framework: "Framework or library"
+      - pattern: "Design pattern or technique"
+
+# Notes
+notes: |
+  Best Practices:
+  1. Always recall before delegating to provide context
+  2. Tag all memories with agent name for provenance
+  3. Trigger reflections proactively, not reactively
+  4. Monitor memory quality across all agents
+  5. Consolidate duplicate learnings regularly
+  
+  Common Pitfalls:
+  - Over-delegating simple tasks (use single agent when possible)
+  - Under-utilizing shared memory (always recall first)
+  - Creating too many low-importance memories (quality > quantity)
+  - Not reflecting on cross-agent patterns (missed learning opportunities)
+  
+  WxO Integration:
+  - Supervisor runs as main orchestrator
+  - Specialized agents run as sub-processes
+  - All agents share same AstroBob MCP connection
+  - Memory store is the single source of truth
+
+# Made with Bob

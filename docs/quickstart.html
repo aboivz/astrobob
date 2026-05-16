@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quick Start - AstroBob Documentation</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <span class="logo-icon">🧠</span>
+                    <span class="logo-text">AstroBob</span>
+                </div>
+                <nav class="main-nav">
+                    <a href="index.html">Home</a>
+                    <a href="quickstart.html" class="active">Quick Start</a>
+                    <a href="installation.html">Installation</a>
+                    <a href="https://github.com/aboivz/astrobob" target="_blank">GitHub</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="docs-layout">
+            <aside class="sidebar">
+                <div class="search-box">
+                    <input type="text" id="searchInput" placeholder="Search docs...">
+                </div>
+                <nav class="sidebar-nav">
+                    <div class="nav-section">
+                        <div class="nav-section-title">Getting Started</div>
+                        <a href="quickstart.html" class="active">Quick Start</a>
+                        <a href="installation.html">Installation</a>
+                    </div>
+                    <div class="nav-section">
+                        <div class="nav-section-title">Usage</div>
+                        <a href="cli-reference.html">CLI Reference</a>
+                        <a href="mcp-tools.html">MCP Tools</a>
+                    </div>
+                    <div class="nav-section">
+                        <div class="nav-section-title">Reference</div>
+                        <a href="troubleshooting.html">Troubleshooting</a>
+                        <a href="faq.html">FAQ</a>
+                    </div>
+                </nav>
+            </aside>
+
+            <main class="content">
+                <h1>Quick Start Guide</h1>
+                <p class="lead">Get AstroBob up and running in under 5 minutes. This guide walks you through installation, configuration, and your first memory operations.</p>
+
+                <div class="alert alert-info">
+                    <strong>Prerequisites:</strong> Python 3.12+, AstraDB account (free tier works), and basic command line knowledge.
+                </div>
+
+                <h2 id="step-1-install">Step 1: Install AstroBob</h2>
+                <p>Install using <code>uv</code> (recommended) or <code>pip</code>:</p>
+
+                <div class="code-tabs">
+                    <button class="tab-button active" onclick="showTab('uv-install')">uv</button>
+                    <button class="tab-button" onclick="showTab('pip-install')">pip</button>
+                </div>
+
+                <div id="uv-install" class="tab-content active">
+                    <pre><code class="language-bash"># Install uv if you haven't already
+curl -LsSf https://astral.sh/uv/install.sh | sh
+
+# Install AstroBob
+uv tool install astrobob
+
+# Verify installation
+astrobob --version</code></pre>
+                </div>
+
+                <div id="pip-install" class="tab-content">
+                    <pre><code class="language-bash"># Install from GitHub
+pip install git+https://github.com/aboivz/astrobob.git
+
+# Verify installation
+astrobob --version</code></pre>
+                </div>
+
+                <h2 id="step-2-astradb">Step 2: Set Up AstraDB</h2>
+                
+                <h3>2.1 Create Database</h3>
+                <ol>
+                    <li>Go to <a href="https://astra.datastax.com" target="_blank">astra.datastax.com</a></li>
+                    <li>Sign up or log in (free tier available)</li>
+                    <li>Click <strong>"Create Database"</strong></li>
+                    <li>Configure:
+                        <ul>
+                            <li><strong>Database name:</strong> <code>astrobob</code></li>
+                            <li><strong>Provider:</strong> AWS</li>
+                            <li><strong>Region:</strong> us-east-2 (recommended)</li>
+                            <li><strong>Tier:</strong> Serverless (Free)</li>
+                        </ul>
+                    </li>
+                    <li>Click <strong>"Create Database"</strong> and wait ~2 minutes</li>
+                </ol>
+
+                <h3>2.2 Get Credentials</h3>
+                <ol>
+                    <li>In your database dashboard, click <strong>"Connect"</strong></li>
+                    <li>Copy the <strong>API Endpoint</strong> (looks like <code>https://xxx-us-east-2.apps.astra.datastax.com</code>)</li>
+                    <li>Click <strong>"Generate Token"</strong> under Application Token</li>
+                    <li>Select role: <strong>Database Administrator</strong></li>
+                    <li>Copy the token (starts with <code>AstraCS:...</code>)</li>
+                </ol>
+
+                <div class="alert alert-warning">
+                    <strong>⚠️ Security:</strong> Save your token securely. It won't be shown again!
+                </div>
+
+                <h3>2.3 Configure Environment</h3>
+                <p>Create a <code>.env</code> file in your project directory:</p>
+
+                <pre><code class="language-bash"># Navigate to your project
+cd ~/projects/my-project
+
+# Create .env file
+cat > .env << 'EOF'
+ASTRA_DB_API_ENDPOINT=https://xxx-us-east-2.apps.astra.datastax.com
+ASTRA_DB_APPLICATION_TOKEN=AstraCS:xxxxxxxxxxxxx
+ASTRA_DB_KEYSPACE=default_keyspace
+ASTROBOB_COLLECTION_PREFIX=astrobob
+EOF</code></pre>
+
+                <h2 id="step-3-initialize">Step 3: Initialize AstroBob</h2>
+                <p>Initialize AstroBob in your project:</p>
+
+                <pre><code class="language-bash"># Initialize (creates .bob/ directory and config files)
+astrobob init
+
+# Set up AstraDB collections
+astrobob astra setup
+
+# Verify everything works
+astrobob doctor</code></pre>
+
+                <p>You should see:</p>
+                <pre><code class="language-text">✓ Environment variables configured
+✓ AstraDB connection successful
+✓ Collections created: semantic, episodic, procedural
+✓ MCP server importable
+✓ .bob/ structure valid
+
+All systems operational! 🚀</code></pre>
+
+                <h2 id="step-4-first-memory">Step 4: Store Your First Memory</h2>
+                
+                <h3>4.1 Store a Semantic Memory (Fact)</h3>
+                <pre><code class="language-bash">astrobob memory remember \
+  --type semantic \
+  --content "This project uses FastAPI 0.104 with async routes" \
+  --importance 4 \
+  --tags fastapi,architecture</code></pre>
+
+                <h3>4.2 Store an Episodic Memory (Event)</h3>
+                <pre><code class="language-bash">astrobob memory remember \
+  --type episodic \
+  --content "Fixed authentication bug by adding token refresh logic in auth.py" \
+  --importance 3 \
+  --tags bugfix,auth</code></pre>
+
+                <h3>4.3 Store a Procedural Memory (How-To)</h3>
+                <pre><code class="language-bash">astrobob memory remember \
+  --type procedural \
+  --content "To add a new API endpoint: 1) Define route in routes/, 2) Add schema in schemas/, 3) Write tests in tests/api/, 4) Update OpenAPI docs" \
+  --importance 5 \
+  --tags api,procedure</code></pre>
+
+                <h2 id="step-5-recall">Step 5: Recall Memories</h2>
+                
+                <h3>5.1 Search All Memories</h3>
+                <pre><code class="language-bash">astrobob memory recall "how to add API endpoint"</code></pre>
+
+                <h3>5.2 Search Specific Type</h3>
+                <pre><code class="language-bash"># Search only procedural memories
+astrobob memory recall "how to add API endpoint" --type procedural
+
+# Search with tags
+astrobob memory recall "authentication" --tags auth,security</code></pre>
+
+                <h3>5.3 View Memory Report</h3>
+                <pre><code class="language-bash">astrobob memory report</code></pre>
+
+                <p>Output example:</p>
+                <pre><code class="language-text">📊 Memory Report for Project: my-project
+
+Collection Statistics:
+  Semantic:   12 memories
+  Episodic:   45 memories
+  Procedural: 8 memories
+  Total:      65 memories
+
+Top Procedural Memories (by importance):
+  1. [★★★★★] How to add API endpoint
+  2. [★★★★☆] Database migration workflow
+  3. [★★★★☆] Code review checklist
+
+Recent Episodes (last 7 days):
+  - Fixed auth bug (3 days ago)
+  - Added user profile endpoint (5 days ago)
+  - Refactored database layer (6 days ago)</code></pre>
+
+                <h2 id="step-6-bob-integration">Step 6: Integrate with IBM Bob</h2>
+                
+                <h3>6.1 Start MCP Server</h3>
+                <p>AstroBob includes an MCP server that Bob can connect to:</p>
+
+                <pre><code class="language-bash"># Start in STDIO mode (default)
+astrobob mcp
+
+# Or start in HTTP mode
+astrobob mcp --http</code></pre>
+
+                <h3>6.2 Configure Bob</h3>
+                <p>The <code>astrobob init</code> command already created <code>.bob/mcp.json</code>. Verify it looks like this:</p>
+
+                <pre><code class="language-json">{
+  "mcpServers": {
+    "astrobob": {
+      "command": "astrobob",
+      "args": ["mcp"],
+      "env": {
+        "ASTRA_DB_API_ENDPOINT": "https://xxx.apps.astra.datastax.com",
+        "ASTRA_DB_APPLICATION_TOKEN": "AstraCS:xxxxx"
+      }
+    }
+  }
+}</code></pre>
+
+                <h3>6.3 Use in Bob</h3>
+                <p>Open Bob in Advanced mode and try:</p>
+
+                <div class="code-example">
+                    <div class="example-title">Bob Chat Example</div>
+                    <pre><code class="language-text">You: "Check if we have any procedures for adding API endpoints"
+
+Bob: [calls recall(query="add API endpoint", memory_type="procedural")]
+     Found procedure: "To add a new API endpoint: 1) Define route..."
+     
+     Yes! I found our standard procedure. Would you like me to follow it?</code></pre>
+                </div>
+
+                <h2 id="step-7-reflection">Step 7: Create Reflections</h2>
+                <p>Convert episodic memories into reusable procedures:</p>
+
+                <pre><code class="language-bash"># First, get episode IDs
+astrobob memory recall "fixed bug" --type episodic
+
+# Create reflection from episodes
+astrobob memory reflect \
+  --episode-id 01HXXX... \
+  --episode-id 01HYYY... \
+  --lesson "Always add integration tests when fixing auth bugs" \
+  --importance 4 \
+  --tags testing,auth</code></pre>
+
+                <h2 id="step-8-skills-export">Step 8: Export as Bob Skills</h2>
+                <p>Turn high-value procedural memories into native Bob skills:</p>
+
+                <pre><code class="language-bash"># Export all important procedures (importance >= 4)
+astrobob skills sync --min-importance 4
+
+# Check generated skills
+ls .bob/skills/learned/</code></pre>
+
+                <p>This creates <code>.bob/skills/learned/<slug>/SKILL.md</code> files that Bob can use natively!</p>
+
+                <h2 id="next-steps">Next Steps</h2>
+                
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <h3>📚 Learn Memory Types</h3>
+                        <p>Understand semantic, episodic, and procedural memory in depth</p>
+                        <a href="memory-types.html" class="btn btn-secondary">Memory Types Guide →</a>
+                    </div>
+
+                    <div class="feature-card">
+                        <h3>🔧 CLI Reference</h3>
+                        <p>Complete reference for all CLI commands and options</p>
+                        <a href="cli-reference.html" class="btn btn-secondary">CLI Docs →</a>
+                    </div>
+
+                    <div class="feature-card">
+                        <h3>🤖 Bob Integration</h3>
+                        <p>Advanced Bob integration patterns and best practices</p>
+                        <a href="bob-integration.html" class="btn btn-secondary">Integration Guide →</a>
+                    </div>
+
+                    <div class="feature-card">
+                        <h3>🏗️ Architecture</h3>
+                        <p>Deep dive into AstroBob's architecture and design</p>
+                        <a href="architecture.html" class="btn btn-secondary">Architecture →</a>
+                    </div>
+                </div>
+
+                <h2 id="common-workflows">Common Workflows</h2>
+
+                <h3>Daily Development Workflow</h3>
+                <pre><code class="language-bash"># Morning: Check what you learned yesterday
+astrobob memory recall "yesterday" --type episodic
+
+# During work: Store important discoveries
+astrobob memory remember --type semantic \
+  --content "API rate limit is 100 req/min per user" \
+  --importance 4
+
+# End of day: Reflect on what you learned
+astrobob memory reflect \
+  --episode-id <today's episodes> \
+  --lesson "Key insight from today's work"
+
+# Weekly: Export new skills
+astrobob skills sync</code></pre>
+
+                <h3>Team Onboarding Workflow</h3>
+                <pre><code class="language-bash"># New team member: Get project knowledge
+astrobob memory recall "architecture" --type semantic
+astrobob memory recall "how to" --type procedural
+
+# Export all procedures as documentation
+astrobob skills sync --min-importance 3</code></pre>
+
+                <h3>Debugging Workflow</h3>
+                <pre><code class="language-bash"># Check if similar bug was fixed before
+astrobob memory recall "authentication error" --type episodic
+
+# After fixing: Document the solution
+astrobob memory remember --type episodic \
+  --content "Fixed auth error by clearing Redis cache" \
+  --importance 3 \
+  --tags bugfix,auth,redis
+
+# If it's a pattern: Create procedure
+astrobob memory reflect \
+  --episode-id <bug fix episodes> \
+  --lesson "Auth errors often need cache clear" \
+  --importance 4</code></pre>
+
+                <h2 id="tips">Pro Tips</h2>
+
+                <div class="alert alert-success">
+                    <h4>💡 Best Practices</h4>
+                    <ul>
+                        <li><strong>Be specific:</strong> "FastAPI uses async def for routes" beats "FastAPI is async"</li>
+                        <li><strong>Use importance wisely:</strong> 5 = critical, 4 = important, 3 = useful, 2 = nice-to-know, 1 = trivial</li>
+                        <li><strong>Tag consistently:</strong> Use lowercase, hyphenated tags like <code>api-design</code>, <code>bug-fix</code></li>
+                        <li><strong>Reflect regularly:</strong> Weekly reflections turn experience into reusable knowledge</li>
+                        <li><strong>Clean up:</strong> Use <code>astrobob memory forget</code> for outdated memories</li>
+                    </ul>
+                </div>
+
+                <h2 id="troubleshooting">Quick Troubleshooting</h2>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Issue</th>
+                            <th>Solution</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>❌ "Connection refused"</td>
+                            <td>Check <code>ASTRA_DB_API_ENDPOINT</code> in <code>.env</code></td>
+                        </tr>
+                        <tr>
+                            <td>❌ "Authentication failed"</td>
+                            <td>Verify <code>ASTRA_DB_APPLICATION_TOKEN</code> is correct</td>
+                        </tr>
+                        <tr>
+                            <td>❌ "Collection not found"</td>
+                            <td>Run <code>astrobob astra setup</code> to create collections</td>
+                        </tr>
+                        <tr>
+                            <td>❌ Bob doesn't see MCP tools</td>
+                            <td>Check <code>.bob/mcp.json</code> exists and Bob is in Advanced mode</td>
+                        </tr>
+                        <tr>
+                            <td>❌ "No memories found"</td>
+                            <td>Verify you're in the correct project directory with <code>.env</code></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>For more detailed troubleshooting, see the <a href="troubleshooting.html">Troubleshooting Guide</a>.</p>
+
+                <div class="alert alert-info">
+                    <h4>🎉 You're Ready!</h4>
+                    <p>You've completed the quick start guide. AstroBob is now set up and ready to give your AI agents persistent memory. Start building!</p>
+                </div>
+
+                <div class="nav-footer">
+                    <a href="installation.html" class="nav-prev">← Installation</a>
+                    <a href="memory-types.html" class="nav-next">Memory Types →</a>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 AstroBob. Open source under MIT License.</p>
+            <p>
+                <a href="https://github.com/aboivz/astrobob">GitHub</a> •
+                <a href="https://github.com/aboivz/astrobob/issues">Issues</a> •
+                <a href="https://github.com/aboivz/astrobob/blob/main/LICENSE">License</a>
+            </p>
+        </div>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="search.js"></script>
+    <script>
+        function showTab(tabId) {
+            // Hide all tab contents
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // Remove active class from all buttons
+            document.querySelectorAll('.tab-button').forEach(button => {
+                button.classList.remove('active');
+            });
+            
+            // Show selected tab
+            document.getElementById(tabId).classList.add('active');
+            
+            // Add active class to clicked button
+            event.target.classList.add('active');
+        }
+    </script>
+</body>
+</html>

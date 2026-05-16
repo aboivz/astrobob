@@ -1,0 +1,927 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CLI Reference - AstroBob Documentation</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <span class="logo-icon">🧠</span>
+                    <span class="logo-text">AstroBob</span>
+                </div>
+                <nav class="main-nav">
+                    <a href="index.html">Home</a>
+                    <a href="quickstart.html">Quick Start</a>
+                    <a href="installation.html">Installation</a>
+                    <a href="https://github.com/aboivz/astrobob" target="_blank">GitHub</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="docs-layout">
+            <aside class="sidebar">
+                <div class="search-box">
+                    <input type="text" id="searchInput" placeholder="Search docs...">
+                </div>
+                <nav class="sidebar-nav">
+                    <div class="nav-section">
+                        <div class="nav-section-title">Getting Started</div>
+                        <a href="quickstart.html">Quick Start</a>
+                        <a href="installation.html">Installation</a>
+                    </div>
+                    <div class="nav-section">
+                        <div class="nav-section-title">Usage</div>
+                        <a href="cli-reference.html" class="active">CLI Reference</a>
+                        <a href="mcp-tools.html">MCP Tools</a>
+                    </div>
+                    <div class="nav-section">
+                        <div class="nav-section-title">Reference</div>
+                        <a href="troubleshooting.html">Troubleshooting</a>
+                        <a href="faq.html">FAQ</a>
+                    </div>
+                </nav>
+            </aside>
+
+            <main class="content">
+                <h1>CLI Reference</h1>
+                <p class="lead">Complete reference for all AstroBob command-line interface commands and options.</p>
+
+                <div class="alert alert-info">
+                    <strong>💡 Tip:</strong> Use <code>astrobob --help</code> or <code>astrobob <command> --help</code> for inline help.
+                </div>
+
+                <h2 id="global-options">Global Options</h2>
+                <p>These options work with all commands:</p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Option</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>--version</code></td>
+                            <td>Show version and exit</td>
+                        </tr>
+                        <tr>
+                            <td><code>--help</code></td>
+                            <td>Show help message and exit</td>
+                        </tr>
+                        <tr>
+                            <td><code>--verbose</code>, <code>-v</code></td>
+                            <td>Enable verbose output</td>
+                        </tr>
+                        <tr>
+                            <td><code>--quiet</code>, <code>-q</code></td>
+                            <td>Suppress non-error output</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2 id="command-overview">Command Overview</h2>
+
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <h3>🚀 <a href="#init">init</a></h3>
+                        <p>Initialize AstroBob in a project</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3>🗄️ <a href="#astra">astra</a></h3>
+                        <p>Manage AstraDB collections</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3>🧠 <a href="#memory">memory</a></h3>
+                        <p>Store and retrieve memories</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3>🔌 <a href="#mcp">mcp</a></h3>
+                        <p>Start MCP server for Bob</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3>📚 <a href="#skills">skills</a></h3>
+                        <p>Export memories as Bob skills</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3>🏥 <a href="#doctor">doctor</a></h3>
+                        <p>Diagnose configuration issues</p>
+                    </div>
+                </div>
+
+                <hr>
+
+                <h2 id="init">astrobob init</h2>
+                <p>Initialize AstroBob in the current project directory.</p>
+
+                <h3>Usage</h3>
+                <pre><code class="language-bash">astrobob init [OPTIONS]</code></pre>
+
+                <h3>Description</h3>
+                <p>Creates the necessary directory structure and configuration files for AstroBob:</p>
+                <ul>
+                    <li><code>.bob/</code> - Bob configuration directory</li>
+                    <li><code>.bob/mcp.json</code> - MCP server configuration</li>
+                    <li><code>.bob/custom_modes.yaml</code> - Custom Bob modes</li>
+                    <li><code>.bob/skills/</code> - Bob skills directory</li>
+                    <li><code>.env.example</code> - Example environment variables</li>
+                </ul>
+
+                <h3>Options</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Option</th>
+                            <th>Type</th>
+                            <th>Default</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>--force</code></td>
+                            <td>flag</td>
+                            <td>false</td>
+                            <td>Overwrite existing files</td>
+                        </tr>
+                        <tr>
+                            <td><code>--no-skills</code></td>
+                            <td>flag</td>
+                            <td>false</td>
+                            <td>Skip creating default skills</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>Examples</h3>
+                <pre><code class="language-bash"># Initialize in current directory
+astrobob init
+
+# Force overwrite existing files
+astrobob init --force
+
+# Initialize without default skills
+astrobob init --no-skills</code></pre>
+
+                <h3>Exit Codes</h3>
+                <ul>
+                    <li><code>0</code> - Success</li>
+                    <li><code>1</code> - Files already exist (use --force)</li>
+                    <li><code>2</code> - Permission error</li>
+                </ul>
+
+                <hr>
+
+                <h2 id="astra">astrobob astra</h2>
+                <p>Manage AstraDB collections and connections.</p>
+
+                <h3 id="astra-setup">astrobob astra setup</h3>
+                <p>Create required AstraDB collections.</p>
+
+                <h4>Usage</h4>
+                <pre><code class="language-bash">astrobob astra setup [OPTIONS]</code></pre>
+
+                <h4>Description</h4>
+                <p>Creates three collections in AstraDB:</p>
+                <ul>
+                    <li><code>astrobob_semantic_memory</code> - For facts and knowledge</li>
+                    <li><code>astrobob_episodic_memory</code> - For events and experiences</li>
+                    <li><code>astrobob_procedural_memory</code> - For procedures and how-tos</li>
+                </ul>
+
+                <h4>Options</h4>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Option</th>
+                            <th>Type</th>
+                            <th>Default</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>--prefix</code></td>
+                            <td>string</td>
+                            <td>astrobob</td>
+                            <td>Collection name prefix</td>
+                        </tr>
+                        <tr>
+                            <td><code>--drop-existing</code></td>
+                            <td>flag</td>
+                            <td>false</td>
+                            <td>Drop existing collections first</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h4>Examples</h4>
+                <pre><code class="language-bash"># Create collections with default prefix
+astrobob astra setup
+
+# Use custom prefix
+astrobob astra setup --prefix myproject
+
+# Recreate collections (WARNING: deletes data)
+astrobob astra setup --drop-existing</code></pre>
+
+                <h3 id="astra-status">astrobob astra status</h3>
+                <p>Check AstraDB connection and collection status.</p>
+
+                <h4>Usage</h4>
+                <pre><code class="language-bash">astrobob astra status</code></pre>
+
+                <h4>Output</h4>
+                <pre><code class="language-text">✓ Connected to AstraDB
+✓ astrobob_semantic_memory (1,234 documents)
+✓ astrobob_episodic_memory (5,678 documents)
+✓ astrobob_procedural_memory (90 documents)</code></pre>
+
+                <hr>
+
+                <h2 id="memory">astrobob memory</h2>
+                <p>Store, retrieve, and manage memories.</p>
+
+                <h3 id="memory-remember">astrobob memory remember</h3>
+                <p>Store a new memory.</p>
+
+                <h4>Usage</h4>
+                <pre><code class="language-bash">astrobob memory remember [OPTIONS]</code></pre>
+
+                <h4>Required Options</h4>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Option</th>
+                            <th>Type</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>--type</code></td>
+                            <td>choice</td>
+                            <td>Memory type: semantic, episodic, or procedural</td>
+                        </tr>
+                        <tr>
+                            <td><code>--content</code></td>
+                            <td>string</td>
+                            <td>Memory content (what to remember)</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h4>Optional Options</h4>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Option</th>
+                            <th>Type</th>
+                            <th>Default</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>--project</code></td>
+                            <td>string</td>
+                            <td>current dir</td>
+                            <td>Project name</td>
+                        </tr>
+                        <tr>
+                            <td><code>--importance</code></td>
+                            <td>int (1-5)</td>
+                            <td>3</td>
+                            <td>Importance level</td>
+                        </tr>
+                        <tr>
+                            <td><code>--tags</code></td>
+                            <td>string</td>
+                            <td>none</td>
+                            <td>Comma-separated tags</td>
+                        </tr>
+                        <tr>
+                            <td><code>--confidence</code></td>
+                            <td>float (0-1)</td>
+                            <td>1.0</td>
+                            <td>Confidence level</td>
+                        </tr>
+                        <tr>
+                            <td><code>--source</code></td>
+                            <td>string</td>
+                            <td>cli</td>
+                            <td>Source: cli, bob, bobshell, wxo, user</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h4>Examples</h4>
+                <pre><code class="language-bash"># Store a semantic memory (fact)
+astrobob memory remember \
+  --type semantic \
+  --content "Project uses FastAPI 0.104 with async routes" \
+  --importance 4 \
+  --tags fastapi,architecture
+
+# Store an episodic memory (event)
+astrobob memory remember \
+  --type episodic \
+  --content "Fixed auth bug by adding token refresh logic" \
+  --importance 3 \
+  --tags bugfix,auth
+
+# Store a procedural memory (how-to)
+astrobob memory remember \
+  --type procedural \
+  --content "To add API endpoint: 1) Define route 2) Add schema 3) Write tests" \
+  --importance 5 \
+  --tags api,procedure</code></pre>
+
+                <h3 id="memory-recall">astrobob memory recall</h3>
+                <p>Search and retrieve memories.</p>
+
+                <h4>Usage</h4>
+                <pre><code class="language-bash">astrobob memory recall QUERY [OPTIONS]</code></pre>
+
+                <h4>Arguments</h4>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Argument</th>
+                            <th>Type</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>QUERY</code></td>
+                            <td>string</td>
+                            <td>Search query (natural language)</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h4>Options</h4>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Option</th>
+                            <th>Type</th>
+                            <th>Default</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>--type</code></td>
+                            <td>choice</td>
+                            <td>all</td>
+                            <td>Filter by memory type</td>
+                        </tr>
+                        <tr>
+                            <td><code>--project</code></td>
+                            <td>string</td>
+                            <td>current</td>
+                            <td>Filter by project</td>
+                        </tr>
+                        <tr>
+                            <td><code>--tags</code></td>
+                            <td>string</td>
+                            <td>none</td>
+                            <td>Filter by tags (comma-separated)</td>
+                        </tr>
+                        <tr>
+                            <td><code>--limit</code></td>
+                            <td>int</td>
+                            <td>10</td>
+                            <td>Maximum results to return</td>
+                        </tr>
+                        <tr>
+                            <td><code>--min-importance</code></td>
+                            <td>int (1-5)</td>
+                            <td>1</td>
+                            <td>Minimum importance level</td>
+                        </tr>
+                        <tr>
+                            <td><code>--format</code></td>
+                            <td>choice</td>
+                            <td>table</td>
+                            <td>Output format: table, json, yaml</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h4>Examples</h4>
+                <pre><code class="language-bash"># Search all memories
+astrobob memory recall "how to add API endpoint"
+
+# Search only procedural memories
+astrobob memory recall "authentication" --type procedural
+
+# Search with tag filter
+astrobob memory recall "bug" --tags auth,security
+
+# Get top 5 most important
+astrobob memory recall "architecture" --limit 5 --min-importance 4
+
+# Output as JSON
+astrobob memory recall "fastapi" --format json</code></pre>
+
+                <h3 id="memory-reflect">astrobob memory reflect</h3>
+                <p>Create a procedural memory from episodic memories.</p>
+
+                <h4>Usage</h4>
+                <pre><code class="language-bash">astrobob memory reflect [OPTIONS]</code></pre>
+
+                <h4>Required Options</h4>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Option</th>
+                            <th>Type</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>--episode-id</code></td>
+                            <td>string</td>
+                            <td>Episode ID (can be repeated)</td>
+                        </tr>
+                        <tr>
+                            <td><code>--lesson</code></td>
+                            <td>string</td>
+                            <td>The lesson learned</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h4>Optional Options</h4>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Option</th>
+                            <th>Type</th>
+                            <th>Default</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>--project</code></td>
+                            <td>string</td>
+                            <td>current</td>
+                            <td>Project name</td>
+                        </tr>
+                        <tr>
+                            <td><code>--importance</code></td>
+                            <td>int (1-5)</td>
+                            <td>4</td>
+                            <td>Importance level</td>
+                        </tr>
+                        <tr>
+                            <td><code>--tags</code></td>
+                            <td>string</td>
+                            <td>none</td>
+                            <td>Comma-separated tags</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h4>Examples</h4>
+                <pre><code class="language-bash"># Create reflection from episodes
+astrobob memory reflect \
+  --episode-id 01HXXX... \
+  --episode-id 01HYYY... \
+  --lesson "Always add integration tests when fixing auth bugs" \
+  --importance 4 \
+  --tags testing,auth</code></pre>
+
+                <h3 id="memory-forget">astrobob memory forget</h3>
+                <p>Soft-delete a memory (marks as deleted, doesn't remove).</p>
+
+                <h4>Usage</h4>
+                <pre><code class="language-bash">astrobob memory forget [OPTIONS]</code></pre>
+
+                <h4>Required Options</h4>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Option</th>
+                            <th>Type</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>--type</code></td>
+                            <td>choice</td>
+                            <td>Memory type</td>
+                        </tr>
+                        <tr>
+                            <td><code>--id</code></td>
+                            <td>string</td>
+                            <td>Memory ID (ULID)</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h4>Examples</h4>
+                <pre><code class="language-bash"># Forget a specific memory
+astrobob memory forget --type episodic --id 01HXXX...</code></pre>
+
+                <h3 id="memory-audit">astrobob memory audit</h3>
+                <p>Show audit trail for a memory.</p>
+
+                <h4>Usage</h4>
+                <pre><code class="language-bash">astrobob memory audit [OPTIONS]</code></pre>
+
+                <h4>Required Options</h4>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Option</th>
+                            <th>Type</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>--type</code></td>
+                            <td>choice</td>
+                            <td>Memory type</td>
+                        </tr>
+                        <tr>
+                            <td><code>--id</code></td>
+                            <td>string</td>
+                            <td>Memory ID (ULID)</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h4>Examples</h4>
+                <pre><code class="language-bash"># Show audit trail
+astrobob memory audit --type procedural --id 01HXXX...</code></pre>
+
+                <h4>Output</h4>
+                <pre><code class="language-text">Memory Audit Trail
+==================
+ID: 01HXXX...
+Type: procedural
+Created: 2026-05-15 10:30:00
+Last Accessed: 2026-05-15 14:22:00
+Access Count: 12
+Success Count: 8
+
+Provenance:
+  Derived from: 01HYYY..., 01HZZZ...
+  Session ID: sess_abc123
+  Source: bob
+
+Lifecycle:
+  Created: 2026-05-15 10:30:00
+  Updated: 2026-05-15 12:00:00
+  Exported as skill: 2026-05-15 14:00:00</code></pre>
+
+                <h3 id="memory-report">astrobob memory report</h3>
+                <p>Generate memory statistics report.</p>
+
+                <h4>Usage</h4>
+                <pre><code class="language-bash">astrobob memory report [OPTIONS]</code></pre>
+
+                <h4>Options</h4>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Option</th>
+                            <th>Type</th>
+                            <th>Default</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>--project</code></td>
+                            <td>string</td>
+                            <td>current</td>
+                            <td>Filter by project</td>
+                        </tr>
+                        <tr>
+                            <td><code>--format</code></td>
+                            <td>choice</td>
+                            <td>text</td>
+                            <td>Output format: text, json, yaml</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h4>Examples</h4>
+                <pre><code class="language-bash"># Generate report for current project
+astrobob memory report
+
+# Generate JSON report
+astrobob memory report --format json</code></pre>
+
+                <hr>
+
+                <h2 id="mcp">astrobob mcp</h2>
+                <p>Start the MCP server for Bob integration.</p>
+
+                <h3>Usage</h3>
+                <pre><code class="language-bash">astrobob mcp [OPTIONS]</code></pre>
+
+                <h3>Description</h3>
+                <p>Starts the Model Context Protocol (MCP) server that exposes 5 tools to Bob:</p>
+                <ul>
+                    <li><code>remember</code> - Store new memories</li>
+                    <li><code>recall</code> - Search memories</li>
+                    <li><code>reflect</code> - Create procedural memories</li>
+                    <li><code>forget</code> - Delete memories</li>
+                    <li><code>audit_trail</code> - View memory history</li>
+                </ul>
+
+                <h3>Options</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Option</th>
+                            <th>Type</th>
+                            <th>Default</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>--http</code></td>
+                            <td>flag</td>
+                            <td>false</td>
+                            <td>Use HTTP/SSE instead of STDIO</td>
+                        </tr>
+                        <tr>
+                            <td><code>--port</code></td>
+                            <td>int</td>
+                            <td>8765</td>
+                            <td>HTTP port (only with --http)</td>
+                        </tr>
+                        <tr>
+                            <td><code>--host</code></td>
+                            <td>string</td>
+                            <td>localhost</td>
+                            <td>HTTP host (only with --http)</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>Examples</h3>
+                <pre><code class="language-bash"># Start in STDIO mode (default, for Bob)
+astrobob mcp
+
+# Start in HTTP mode
+astrobob mcp --http
+
+# Start on custom port
+astrobob mcp --http --port 9000</code></pre>
+
+                <div class="alert alert-info">
+                    <strong>💡 Note:</strong> STDIO mode is recommended for Bob integration. HTTP mode is useful for debugging with MCP Inspector.
+                </div>
+
+                <hr>
+
+                <h2 id="skills">astrobob skills</h2>
+                <p>Export procedural memories as Bob skills.</p>
+
+                <h3 id="skills-sync">astrobob skills sync</h3>
+                <p>Export high-value procedural memories to <code>.bob/skills/learned/</code>.</p>
+
+                <h4>Usage</h4>
+                <pre><code class="language-bash">astrobob skills sync [OPTIONS]</code></pre>
+
+                <h4>Options</h4>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Option</th>
+                            <th>Type</th>
+                            <th>Default</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>--min-importance</code></td>
+                            <td>int (1-5)</td>
+                            <td>4</td>
+                            <td>Minimum importance to export</td>
+                        </tr>
+                        <tr>
+                            <td><code>--project</code></td>
+                            <td>string</td>
+                            <td>current</td>
+                            <td>Filter by project</td>
+                        </tr>
+                        <tr>
+                            <td><code>--dry-run</code></td>
+                            <td>flag</td>
+                            <td>false</td>
+                            <td>Show what would be exported</td>
+                        </tr>
+                        <tr>
+                            <td><code>--force</code></td>
+                            <td>flag</td>
+                            <td>false</td>
+                            <td>Re-export already exported memories</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h4>Examples</h4>
+                <pre><code class="language-bash"># Export important procedures (importance >= 4)
+astrobob skills sync
+
+# Export all procedures (importance >= 3)
+astrobob skills sync --min-importance 3
+
+# Preview what would be exported
+astrobob skills sync --dry-run
+
+# Re-export everything
+astrobob skills sync --force</code></pre>
+
+                <h4>Output</h4>
+                <pre><code class="language-text">Syncing procedural memories to Bob skills...
+
+✓ add-mcp-tool (importance: 5)
+  → .bob/skills/learned/add-mcp-tool/SKILL.md
+
+✓ api-endpoint-workflow (importance: 4)
+  → .bob/skills/learned/api-endpoint-workflow/SKILL.md
+
+Synced 2 skills successfully!</code></pre>
+
+                <hr>
+
+                <h2 id="doctor">astrobob doctor</h2>
+                <p>Diagnose configuration and connectivity issues.</p>
+
+                <h3>Usage</h3>
+                <pre><code class="language-bash">astrobob doctor</code></pre>
+
+                <h3>Description</h3>
+                <p>Runs comprehensive health checks:</p>
+                <ul>
+                    <li>✓ Environment variables configured</li>
+                    <li>✓ AstraDB connectivity</li>
+                    <li>✓ Collections exist and accessible</li>
+                    <li>✓ MCP server importable</li>
+                    <li>✓ <code>.bob/</code> directory structure valid</li>
+                </ul>
+
+                <h3>Examples</h3>
+                <pre><code class="language-bash"># Run diagnostics
+astrobob doctor</code></pre>
+
+                <h3>Output (Success)</h3>
+                <pre><code class="language-text">Running AstroBob diagnostics...
+
+✓ Environment variables configured
+  ASTRA_DB_API_ENDPOINT: https://xxx.apps.astra.datastax.com
+  ASTRA_DB_APPLICATION_TOKEN: AstraCS:*** (hidden)
+  ASTRA_DB_KEYSPACE: default_keyspace
+
+✓ AstraDB connection successful
+  Region: us-east-2
+  Latency: 45ms
+
+✓ Collections accessible
+  astrobob_semantic_memory: 123 documents
+  astrobob_episodic_memory: 456 documents
+  astrobob_procedural_memory: 78 documents
+
+✓ MCP server importable
+  Version: 0.1.0
+  Tools: 5 available
+
+✓ .bob/ structure valid
+  mcp.json: present
+  custom_modes.yaml: present
+  skills/: 3 skills found
+
+All systems operational! 🚀</code></pre>
+
+                <h3>Output (Issues Found)</h3>
+                <pre><code class="language-text">Running AstroBob diagnostics...
+
+✗ Environment variables missing
+  Missing: ASTRA_DB_API_ENDPOINT
+  Fix: Add to .env file
+
+✓ AstraDB connection successful
+
+⚠ Collections missing
+  Missing: astrobob_procedural_memory
+  Fix: Run 'astrobob astra setup'
+
+✓ MCP server importable
+
+✗ .bob/ structure invalid
+  Missing: .bob/mcp.json
+  Fix: Run 'astrobob init'
+
+Issues found. See above for fixes.</code></pre>
+
+                <h3>Exit Codes</h3>
+                <ul>
+                    <li><code>0</code> - All checks passed</li>
+                    <li><code>1</code> - Configuration issues found</li>
+                    <li><code>2</code> - Critical errors (cannot connect)</li>
+                </ul>
+
+                <hr>
+
+                <h2 id="environment-variables">Environment Variables</h2>
+                <p>AstroBob uses these environment variables (typically in <code>.env</code>):</p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Variable</th>
+                            <th>Required</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>ASTRA_DB_API_ENDPOINT</code></td>
+                            <td>Yes</td>
+                            <td>AstraDB API endpoint URL</td>
+                        </tr>
+                        <tr>
+                            <td><code>ASTRA_DB_APPLICATION_TOKEN</code></td>
+                            <td>Yes</td>
+                            <td>AstraDB application token</td>
+                        </tr>
+                        <tr>
+                            <td><code>ASTRA_DB_KEYSPACE</code></td>
+                            <td>No</td>
+                            <td>Keyspace name (default: default_keyspace)</td>
+                        </tr>
+                        <tr>
+                            <td><code>ASTROBOB_COLLECTION_PREFIX</code></td>
+                            <td>No</td>
+                            <td>Collection name prefix (default: astrobob)</td>
+                        </tr>
+                        <tr>
+                            <td><code>ASTROBOB_PROJECT</code></td>
+                            <td>No</td>
+                            <td>Default project name (default: current directory)</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2 id="tips">Tips & Best Practices</h2>
+
+                <div class="alert alert-success">
+                    <h4>💡 Pro Tips</h4>
+                    <ul>
+                        <li><strong>Use aliases:</strong> Add <code>alias ab='astrobob'</code> to your shell config</li>
+                        <li><strong>Tab completion:</strong> Most shells support tab completion for commands</li>
+                        <li><strong>JSON output:</strong> Use <code>--format json</code> for scripting and automation</li>
+                        <li><strong>Importance levels:</strong> 5=critical, 4=important, 3=useful, 2=nice-to-know, 1=trivial</li>
+                        <li><strong>Tag consistently:</strong> Use lowercase, hyphenated tags like <code>api-design</code></li>
+                    </ul>
+                </div>
+
+                <div class="nav-footer">
+                    <a href="quickstart.html" class="nav-prev">← Quick Start</a>
+                    <a href="mcp-tools.html" class="nav-next">MCP Tools →</a>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 AstroBob. Open source under MIT License.</p>
+            <p>
+                <a href="https://github.com/aboivz/astrobob">GitHub</a> •
+                <a href="https://github.com/aboivz/astrobob/issues">Issues</a> •
+                <a href="https://github.com/aboivz/astrobob/blob/main/LICENSE">License</a>
+            </p>
+        </div>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js"></script>
+    <script src="search.js"></script>
+</body>
+</html>

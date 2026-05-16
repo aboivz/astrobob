@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MCP Tools Reference - AstroBob Documentation</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <span class="logo-icon">🧠</span>
+                    <span class="logo-text">AstroBob</span>
+                </div>
+                <nav class="main-nav">
+                    <a href="index.html">Home</a>
+                    <a href="quickstart.html">Quick Start</a>
+                    <a href="installation.html">Installation</a>
+                    <a href="https://github.com/aboivz/astrobob" target="_blank">GitHub</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="docs-layout">
+            <aside class="sidebar">
+                <div class="search-box">
+                    <input type="text" id="searchInput" placeholder="Search docs...">
+                </div>
+                <nav class="sidebar-nav">
+                    <div class="nav-section">
+                        <div class="nav-section-title">Getting Started</div>
+                        <a href="quickstart.html">Quick Start</a>
+                        <a href="installation.html">Installation</a>
+                    </div>
+                    <div class="nav-section">
+                        <div class="nav-section-title">Usage</div>
+                        <a href="cli-reference.html">CLI Reference</a>
+                        <a href="mcp-tools.html" class="active">MCP Tools</a>
+                    </div>
+                    <div class="nav-section">
+                        <div class="nav-section-title">Reference</div>
+                        <a href="troubleshooting.html">Troubleshooting</a>
+                        <a href="faq.html">FAQ</a>
+                    </div>
+                </nav>
+            </aside>
+
+            <main class="content">
+                <h1>MCP Tools Reference</h1>
+                <p class="lead">Complete reference for the 5 Model Context Protocol (MCP) tools that AstroBob exposes to IBM Bob and other MCP clients.</p>
+
+                <div class="alert alert-info">
+                    <strong>What is MCP?</strong> The Model Context Protocol allows AI agents like Bob to access external tools and data sources. AstroBob implements an MCP server that Bob can connect to for persistent memory operations.
+                </div>
+
+                <h2 id="overview">Tool Overview</h2>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tool</th>
+                            <th>Purpose</th>
+                            <th>When to Use</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><a href="#remember"><code>remember</code></a></td>
+                            <td>Store new memory</td>
+                            <td>After learning something new or completing a task</td>
+                        </tr>
+                        <tr>
+                            <td><a href="#recall"><code>recall</code></a></td>
+                            <td>Search memories</td>
+                            <td>Before starting a task or when needing context</td>
+                        </tr>
+                        <tr>
+                            <td><a href="#reflect"><code>reflect</code></a></td>
+                            <td>Create procedure from episodes</td>
+                            <td>When discovering reusable patterns</td>
+                        </tr>
+                        <tr>
+                            <td><a href="#forget"><code>forget</code></a></td>
+                            <td>Delete memory</td>
+                            <td>When information becomes outdated</td>
+                        </tr>
+                        <tr>
+                            <td><a href="#audit_trail"><code>audit_trail</code></a></td>
+                            <td>View memory history</td>
+                            <td>When debugging or understanding provenance</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h2 id="connection">Connecting Bob to AstroBob</h2>
+
+                <h3>1. Start the MCP Server</h3>
+                <pre><code class="language-bash"># In your project directory
+astrobob mcp</code></pre>
+
+                <h3>2. Configure Bob</h3>
+                <p>The <code>astrobob init</code> command creates <code>.bob/mcp.json</code>:</p>
+
+                <pre><code class="language-json">{
+  "mcpServers": {
+    "astrobob": {
+      "command": "astrobob",
+      "args": ["mcp"],
+      "env": {
+        "ASTRA_DB_API_ENDPOINT": "https://xxx.apps.astra.datastax.com",
+        "ASTRA_DB_APPLICATION_TOKEN": "AstraCS:xxxxx"
+      }
+    }
+  }
+}</code></pre>
+
+                <h3>3. Use in Bob</h3>
+                <p>Open Bob in <strong>Advanced mode</strong> to access MCP tools. Bob will automatically discover the 5 AstroBob tools.</p>
+
+                <hr>
+
+                <h2 id="remember">remember</h2>
+                <p>Store a new memory in AstroBob's persistent memory system.</p>
+
+                <h3>When to Use</h3>
+                <ul>
+                    <li>✅ After learning a project convention or fact</li>
+                    <li>✅ After completing a task or fixing a bug</li>
+                    <li>✅ When discovering a reusable procedure</li>
+                    <li>✅ After making an important decision</li>
+                    <li>❌ For transient state or temporary data</li>
+                    <li>❌ For information already stored</li>
+                </ul>
+
+                <h3>Input Schema</h3>
+                <pre><code class="language-json">{
+  "content": "string (required)",
+  "memory_type": "semantic | episodic | procedural (required)",
+  "project": "string (optional, defaults to current directory)",
+  "tags": ["string"] (optional),
+  "importance": 1-5 (optional, default: 3),
+  "confidence": 0.0-1.0 (optional, default: 1.0),
+  "source": "bob | bobshell | wxo | cli | user (optional, default: bob)"
+}</code></pre>
+
+                <h3>Parameters</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Parameter</th>
+                            <th>Type</th>
+                            <th>Required</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>content</code></td>
+                            <td>string</td>
+                            <td>Yes</td>
+                            <td>The memory content (what to remember)</td>
+                        </tr>
+                        <tr>
+                            <td><code>memory_type</code></td>
+                            <td>enum</td>
+                            <td>Yes</td>
+                            <td>Type: <code>semantic</code> (facts), <code>episodic</code> (events), <code>procedural</code> (how-tos)</td>
+                        </tr>
+                        <tr>
+                            <td><code>project</code></td>
+                            <td>string</td>
+                            <td>No</td>
+                            <td>Project name (defaults to current directory)</td>
+                        </tr>
+                        <tr>
+                            <td><code>tags</code></td>
+                            <td>array</td>
+                            <td>No</td>
+                            <td>Tags for categorization (e.g., ["api", "auth"])</td>
+                        </tr>
+                        <tr>
+                            <td><code>importance</code></td>
+                            <td>integer</td>
+                            <td>No</td>
+                            <td>1-5 scale (5=critical, 4=important, 3=useful, 2=nice-to-know, 1=trivial)</td>
+                        </tr>
+                        <tr>
+                            <td><code>confidence</code></td>
+                            <td>float</td>
+                            <td>No</td>
+                            <td>0.0-1.0 confidence level (1.0=certain, 0.5=uncertain)</td>
+                        </tr>
+                        <tr>
+                            <td><code>source</code></td>
+                            <td>enum</td>
+                            <td>No</td>
+                            <td>Source of memory (defaults to "bob")</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>Return Value</h3>
+                <pre><code class="language-json">{
+  "success": true,
+  "memory_id": "01HXXX...",
+  "message": "Memory stored successfully"
+}</code></pre>
+
+                <h3>Examples</h3>
+
+                <div class="code-example">
+                    <div class="example-title">Semantic Memory (Fact)</div>
+                    <pre><code class="language-json">remember({
+  "content": "This project uses FastAPI 0.104 with async routes and Pydantic v2 models",
+  "memory_type": "semantic",
+  "importance": 4,
+  "tags": ["fastapi", "architecture", "dependencies"]
+})</code></pre>
+                </div>
+
+                <div class="code-example">
+                    <div class="example-title">Episodic Memory (Event)</div>
+                    <pre><code class="language-json">remember({
+  "content": "Fixed authentication bug by adding token refresh logic in auth.py. The issue was expired tokens not being handled gracefully.",
+  "memory_type": "episodic",
+  "importance": 3,
+  "tags": ["bugfix", "auth", "tokens"]
+})</code></pre>
+                </div>
+
+                <div class="code-example">
+                    <div class="example-title">Procedural Memory (How-To)</div>
+                    <pre><code class="language-json">remember({
+  "content": "To add a new API endpoint: 1) Define route in routes/ with @router decorator, 2) Add request/response schemas in schemas/, 3) Write unit tests in tests/api/, 4) Update OpenAPI docs, 5) Test with curl",
+  "memory_type": "procedural",
+  "importance": 5,
+  "tags": ["api", "procedure", "development"]
+})</code></pre>
+                </div>
+
+                <h3>Best Practices</h3>
+                <div class="alert alert-success">
+                    <ul>
+                        <li><strong>Be specific:</strong> "FastAPI uses async def for routes" beats "FastAPI is async"</li>
+                        <li><strong>Include context:</strong> Mention file names, error messages, or specific values</li>
+                        <li><strong>Use importance wisely:</strong> Reserve 5 for critical patterns you'll reuse often</li>
+                        <li><strong>Tag consistently:</strong> Use lowercase, hyphenated tags like "api-design"</li>
+                        <li><strong>Avoid duplication:</strong> Check with <code>recall()</code> first</li>
+                    </ul>
+                </div>
+
+                <hr>
+
+                <h2 id="recall">recall</h2>
+                <p>Search and retrieve memories using natural language queries with hybrid search (vector + keyword + reranking).</p>
+
+                <h3>When to Use</h3>
+                <ul>
+                    <li>✅ Before starting a non-trivial task</li>
+                    <li>✅ When you need project context</li>
+                    <li>✅ To check if a problem was solved before</li>
+                    <li>✅ To find relevant procedures</li>
+                    <li>❌ For every single action (use judgment)</li>
+                </ul>
+
+                <h3>Input Schema</h3>
+                <pre><code class="language-json">{
+  "query": "string (required)",
+  "memory_type": "semantic | episodic | procedural | all (optional)",
+  "project": "string (optional)",
+  "tags": ["string"] (optional),
+  "limit": 1-50 (optional, default: 10),
+  "min_importance": 1-5 (optional, default: 1)
+}</code></pre>
+
+                <h3>Parameters</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Parameter</th>
+                            <th>Type</th>
+                            <th>Required</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>query</code></td>
+                            <td>string</td>
+                            <td>Yes</td>
+                            <td>Natural language search query</td>
+                        </tr>
+                        <tr>
+                            <td><code>memory_type</code></td>
+                            <td>enum</td>
+                            <td>No</td>
+                            <td>Filter by type (defaults to "all")</td>
+                        </tr>
+                        <tr>
+                            <td><code>project</code></td>
+                            <td>string</td>
+                            <td>No</td>
+                            <td>Filter by project (defaults to current)</td>
+                        </tr>
+                        <tr>
+                            <td><code>tags</code></td>
+                            <td>array</td>
+                            <td>No</td>
+                            <td>Filter by tags (AND logic)</td>
+                        </tr>
+                        <tr>
+                            <td><code>limit</code></td>
+                            <td>integer</td>
+                            <td>No</td>
+                            <td>Maximum results (1-50, default: 10)</td>
+                        </tr>
+                        <tr>
+                            <td><code>min_importance</code></td>
+                            <td>integer</td>
+                            <td>No</td>
+                            <td>Minimum importance level (1-5)</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>Return Value</h3>
+                <pre><code class="language-json">{
+  "success": true,
+  "results": [
+    {
+      "memory_id": "01HXXX...",
+      "memory_type": "procedural",
+      "content": "To add API endpoint: ...",
+      "score": 0.92,
+      "importance": 5,
+      "tags": ["api", "procedure"],
+      "created_at": "2026-05-15T10:30:00Z",
+      "access_count": 12
+    }
+  ],
+  "total": 1
+}</code></pre>
+
+                <h3>Query Routing</h3>
+                <p>AstroBob automatically routes queries to the most relevant memory types based on keywords:</p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Query Pattern</th>
+                            <th>Priority Order</th>
+                            <th>Example</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>"how to", "should i", "when"</td>
+                            <td>Procedural → Semantic → Episodic</td>
+                            <td>"how to add API endpoint"</td>
+                        </tr>
+                        <tr>
+                            <td>"what is", "is", "does"</td>
+                            <td>Semantic → Procedural → Episodic</td>
+                            <td>"what is the API rate limit"</td>
+                        </tr>
+                        <tr>
+                            <td>"last time", "why did", "when did"</td>
+                            <td>Episodic → Semantic → Procedural</td>
+                            <td>"last time we fixed auth bug"</td>
+                        </tr>
+                        <tr>
+                            <td>Other</td>
+                            <td>Procedural → Semantic → Episodic</td>
+                            <td>"authentication error"</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>Examples</h3>
+
+                <div class="code-example">
+                    <div class="example-title">General Search</div>
+                    <pre><code class="language-json">recall({
+  "query": "how to add API endpoint"
+})
+
+// Returns procedural memories first</code></pre>
+                </div>
+
+                <div class="code-example">
+                    <div class="example-title">Type-Specific Search</div>
+                    <pre><code class="language-json">recall({
+  "query": "authentication",
+  "memory_type": "episodic",
+  "tags": ["bugfix"]
+})
+
+// Returns only episodic memories tagged with "bugfix"</code></pre>
+                </div>
+
+                <div class="code-example">
+                    <div class="example-title">High-Importance Only</div>
+                    <pre><code class="language-json">recall({
+  "query": "architecture decisions",
+  "min_importance": 4,
+  "limit": 5
+})
+
+// Returns top 5 important memories</code></pre>
+                </div>
+
+                <h3>Ranking Algorithm</h3>
+                <p>Results are ranked using a weighted formula:</p>
+
+                <pre><code class="language-text">final_score = 
+  0.55 × rerank_score +
+  0.15 × (importance / 5) +
+  0.15 × recency_factor +
+  0.10 × success_factor -
+  0.05 × staleness_penalty</code></pre>
+
+                <hr>
+
+                <h2 id="reflect">reflect</h2>
+                <p>Create a procedural memory (reusable procedure) from one or more episodic memories (past experiences).</p>
+
+                <h3>When to Use</h3>
+                <ul>
+                    <li>✅ After solving similar problems multiple times</li>
+                    <li>✅ When discovering a reusable pattern</li>
+                    <li>✅ To distill lessons from experiences</li>
+                    <li>✅ Weekly reflection on what you learned</li>
+                    <li>❌ For every single episode (be selective)</li>
+                </ul>
+
+                <h3>Input Schema</h3>
+                <pre><code class="language-json">{
+  "project": "string (required)",
+  "episode_ids": ["string"] (required, 1-10 IDs),
+  "lesson": "string (required)",
+  "tags": ["string"] (optional),
+  "importance": 1-5 (optional, default: 4)
+}</code></pre>
+
+                <h3>Parameters</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Parameter</th>
+                            <th>Type</th>
+                            <th>Required</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>project</code></td>
+                            <td>string</td>
+                            <td>Yes</td>
+                            <td>Project name</td>
+                        </tr>
+                        <tr>
+                            <td><code>episode_ids</code></td>
+                            <td>array</td>
+                            <td>Yes</td>
+                            <td>1-10 episodic memory IDs to reflect on</td>
+                        </tr>
+                        <tr>
+                            <td><code>lesson</code></td>
+                            <td>string</td>
+                            <td>Yes</td>
+                            <td>The procedural lesson learned</td>
+                        </tr>
+                        <tr>
+                            <td><code>tags</code></td>
+                            <td>array</td>
+                            <td>No</td>
+                            <td>Tags for the new procedure</td>
+                        </tr>
+                        <tr>
+                            <td><code>importance</code></td>
+                            <td>integer</td>
+                            <td>No</td>
+                            <td>Importance level (default: 4)</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>Return Value</h3>
+                <pre><code class="language-json">{
+  "success": true,
+  "procedural_memory_id": "01HYYY...",
+  "derived_from": ["01HXXX1...", "01HXXX2..."],
+  "message": "Reflection created successfully"
+}</code></pre>
+
+                <h3>Example</h3>
+
+                <div class="code-example">
+                    <div class="example-title">Creating a Reflection</div>
+                    <pre><code class="language-json">// First, find related episodes
+recall({
+  "query": "fixed authentication bug",
+  "memory_type": "episodic"
+})
+
+// Then create reflection
+reflect({
+  "project": "myapp",
+  "episode_ids": ["01HXXX1...", "01HXXX2...", "01HXXX3..."],
+  "lesson": "When fixing auth bugs: 1) Check token expiry first, 2) Verify refresh logic, 3) Add integration tests, 4) Update error messages",
+  "tags": ["auth", "debugging", "testing"],
+  "importance": 4
+})</code></pre>
+                </div>
+
+                <h3>Workflow</h3>
+                <ol>
+                    <li>Use <code>recall()</code> to find related episodic memories</li>
+                    <li>Identify common patterns across episodes</li>
+                    <li>Distill into a step-by-step procedure</li>
+                    <li>Call <code>reflect()</code> with episode IDs and lesson</li>
+                    <li>New procedural memory is created with provenance tracking</li>
+                </ol>
+
+                <hr>
+
+                <h2 id="forget">forget</h2>
+                <p>Soft-delete a memory (marks as deleted but preserves for audit trail).</p>
+
+                <h3>When to Use</h3>
+                <ul>
+                    <li>✅ When information becomes outdated</li>
+                    <li>✅ When a procedure is superseded</li>
+                    <li>✅ To clean up incorrect memories</li>
+                    <li>❌ For temporary cleanup (memories are already filtered)</li>
+                </ul>
+
+                <h3>Input Schema</h3>
+                <pre><code class="language-json">{
+  "memory_type": "semantic | episodic | procedural (required)",
+  "memory_id": "string (required)"
+}</code></pre>
+
+                <h3>Parameters</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Parameter</th>
+                            <th>Type</th>
+                            <th>Required</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>memory_type</code></td>
+                            <td>enum</td>
+                            <td>Yes</td>
+                            <td>Type of memory to delete</td>
+                        </tr>
+                        <tr>
+                            <td><code>memory_id</code></td>
+                            <td>string</td>
+                            <td>Yes</td>
+                            <td>ULID of the memory</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>Return Value</h3>
+                <pre><code class="language-json">{
+  "success": true,
+  "message": "Memory marked as deleted"
+}</code></pre>
+
+                <h3>Example</h3>
+                <pre><code class="language-json">forget({
+  "memory_type": "semantic",
+  "memory_id": "01HXXX..."
+})</code></pre>
+
+                <div class="alert alert-warning">
+                    <strong>⚠️ Note:</strong> This is a soft delete. The memory is marked with <code>deleted_at</code> timestamp but not removed from the database. It won't appear in <code>recall()</code> results but remains in the audit trail.
+                </div>
+
+                <hr>
+
+                <h2 id="audit_trail">audit_trail</h2>
+                <p>View complete history and metadata for a memory.</p>
+
+                <h3>When to Use</h3>
+                <ul>
+                    <li>✅ Debugging memory issues</li>
+                    <li>✅ Understanding memory provenance</li>
+                    <li>✅ Checking access patterns</li>
+                    <li>✅ Verifying memory lifecycle</li>
+                </ul>
+
+                <h3>Input Schema</h3>
+                <pre><code class="language-json">{
+  "memory_type": "semantic | episodic | procedural (required)",
+  "memory_id": "string (required)"
+}</code></pre>
+
+                <h3>Parameters</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Parameter</th>
+                            <th>Type</th>
+                            <th>Required</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>memory_type</code></td>
+                            <td>enum</td>
+                            <td>Yes</td>
+                            <td>Type of memory</td>
+                        </tr>
+                        <tr>
+                            <td><code>memory_id</code></td>
+                            <td>string</td>
+                            <td>Yes</td>
+                            <td>ULID of the memory</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>Return Value</h3>
+                <pre><code class="language-json">{
+  "success": true,
+  "audit": {
+    "memory_id": "01HXXX...",
+    "memory_type": "procedural",
+    "content": "To add API endpoint: ...",
+    "created_at": "2026-05-15T10:30:00Z",
+    "updated_at": "2026-05-15T12:00:00Z",
+    "last_accessed_at": "2026-05-15T14:22:00Z",
+    "access_count": 12,
+    "success_count": 8,
+    "importance": 5,
+    "tags": ["api", "procedure"],
+    "provenance": {
+      "derived_from": ["01HYYY...", "01HZZZ..."],
+      "session_id": "sess_abc123",
+      "source": "bob"
+    },
+    "exported_as_skill": ".bob/skills/learned/add-api-endpoint/SKILL.md",
+    "exported_at": "2026-05-15T14:00:00Z"
+  }
+}</code></pre>
+
+                <h3>Example</h3>
+                <pre><code class="language-json">audit_trail({
+  "memory_type": "procedural",
+  "memory_id": "01HXXX..."
+})</code></pre>
+
+                <hr>
+
+                <h2 id="decision-tree">Decision Tree for Tool Usage</h2>
+
+                <div class="code-example">
+                    <div class="example-title">When Bob Should Use Each Tool</div>
+                    <pre><code class="language-text">Starting a task?
+├─ Yes → recall() to check for relevant context
+│  ├─ Found procedure? → Follow it
+│  └─ Not found? → Proceed and remember() when done
+└─ No → Continue
+
+Completed a task?
+├─ Learned something new? → remember() as semantic
+├─ Fixed a bug? → remember() as episodic
+└─ Discovered a pattern? → remember() as procedural
+
+Solved similar problems 2-3 times?
+└─ Yes → reflect() to create reusable procedure
+
+Information outdated?
+└─ Yes → forget() the old memory
+
+Need to understand memory history?
+└─ Yes → audit_trail() for full details</code></pre>
+                </div>
+
+                <h2 id="best-practices">Best Practices</h2>
+
+                <div class="alert alert-success">
+                    <h4>💡 For Bob Users</h4>
+                    <ul>
+                        <li><strong>Recall before acting:</strong> Check for procedures before starting non-trivial tasks</li>
+                        <li><strong>Remember after learning:</strong> Store important discoveries immediately</li>
+                        <li><strong>Reflect regularly:</strong> Weekly reflections turn experience into reusable knowledge</li>
+                        <li><strong>Be specific:</strong> Detailed memories are more useful than generic ones</li>
+                        <li><strong>Use importance wisely:</strong> Reserve 5 for critical patterns</li>
+                    </ul>
+                </div>
+
+                <div class="alert alert-info">
+                    <h4>🔧 For Developers</h4>
+                    <ul>
+                        <li><strong>Test with MCP Inspector:</strong> Use <code>astrobob mcp --http</code> for debugging</li>
+                        <li><strong>Monitor access patterns:</strong> Use <code>audit_trail()</code> to see what Bob uses most</li>
+                        <li><strong>Export valuable procedures:</strong> Run <code>astrobob skills sync</code> regularly</li>
+                        <li><strong>Clean up periodically:</strong> Use <code>forget()</code> for outdated memories</li>
+                    </ul>
+                </div>
+
+                <h2 id="error-handling">Error Handling</h2>
+
+                <p>All tools return errors in a consistent format:</p>
+
+                <pre><code class="language-json">{
+  "success": false,
+  "error": "Error message",
+  "error_type": "ConfigError | AstraConnectionError | MemoryNotFoundError"
+}</code></pre>
+
+                <h3>Common Errors</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Error</th>
+                            <th>Cause</th>
+                            <th>Solution</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>ConfigError</code></td>
+                            <td>Missing environment variables</td>
+                            <td>Check <code>.env</code> file, run <code>astrobob doctor</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>AstraConnectionError</code></td>
+                            <td>Cannot connect to AstraDB</td>
+                            <td>Verify credentials, check network</td>
+                        </tr>
+                        <tr>
+                            <td><code>MemoryNotFoundError</code></td>
+                            <td>Memory ID doesn't exist</td>
+                            <td>Verify ID with <code>recall()</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>ValidationError</code></td>
+                            <td>Invalid parameters</td>
+                            <td>Check parameter types and ranges</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="nav-footer">
+                    <a href="cli-reference.html" class="nav-prev">← CLI Reference</a>
+                    <a href="troubleshooting.html" class="nav-next">Troubleshooting →</a>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 AstroBob. Open source under MIT License.</p>
+            <p>
+                <a href="https://github.com/aboivz/astrobob">GitHub</a> •
+                <a href="https://github.com/aboivz/astrobob/issues">Issues</a> •
+                <a href="https://github.com/aboivz/astrobob/blob/main/LICENSE">License</a>
+            </p>
+        </div>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js"></script>
+    <script src="search.js"></script>
+</body>
+</html>

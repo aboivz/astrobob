@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Troubleshooting - AstroBob Documentation</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <span class="logo-icon">🧠</span>
+                    <span class="logo-text">AstroBob</span>
+                </div>
+                <nav class="main-nav">
+                    <a href="index.html">Home</a>
+                    <a href="quickstart.html">Quick Start</a>
+                    <a href="installation.html">Installation</a>
+                    <a href="https://github.com/aboivz/astrobob" target="_blank">GitHub</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="docs-layout">
+            <aside class="sidebar">
+                <div class="search-box">
+                    <input type="text" id="searchInput" placeholder="Search docs...">
+                </div>
+                <nav class="sidebar-nav">
+                    <div class="nav-section">
+                        <div class="nav-section-title">Getting Started</div>
+                        <a href="quickstart.html">Quick Start</a>
+                        <a href="installation.html">Installation</a>
+                    </div>
+                    <div class="nav-section">
+                        <div class="nav-section-title">Usage</div>
+                        <a href="cli-reference.html">CLI Reference</a>
+                        <a href="mcp-tools.html">MCP Tools</a>
+                    </div>
+                    <div class="nav-section">
+                        <div class="nav-section-title">Reference</div>
+                        <a href="troubleshooting.html" class="active">Troubleshooting</a>
+                        <a href="faq.html">FAQ</a>
+                    </div>
+                </nav>
+            </aside>
+
+            <main class="content">
+                <h1>Troubleshooting Guide</h1>
+                <p class="lead">Solutions to common issues and problems when using AstroBob.</p>
+
+                <div class="alert alert-info">
+                    <strong>💡 First Step:</strong> Run <code>astrobob doctor</code> to diagnose most common issues automatically.
+                </div>
+
+                <h2 id="quick-diagnostics">Quick Diagnostics</h2>
+                <pre><code class="language-bash"># Run comprehensive health check
+astrobob doctor
+
+# Check AstraDB connection
+astrobob astra status
+
+# Verify environment variables
+cat .env
+
+# Check Python version
+python --version  # Should be 3.12+</code></pre>
+
+                <h2 id="installation-issues">Installation Issues</h2>
+
+                <h3 id="command-not-found">❌ "astrobob: command not found"</h3>
+
+                <h4>Cause</h4>
+                <p>AstroBob not installed or not in PATH.</p>
+
+                <h4>Solutions</h4>
+
+                <div class="code-tabs">
+                    <button class="tab-button active" onclick="showTab('uv-path')">uv</button>
+                    <button class="tab-button" onclick="showTab('pip-path')">pip</button>
+                    <button class="tab-button" onclick="showTab('pipx-path')">pipx</button>
+                </div>
+
+                <div id="uv-path" class="tab-content active">
+                    <pre><code class="language-bash"># Verify installation
+uv tool list
+
+# If not installed
+uv tool install astrobob
+
+# Add to PATH (if needed)
+export PATH="$HOME/.local/bin:$PATH"  # Linux/macOS
+# Or add to ~/.bashrc or ~/.zshrc</code></pre>
+                </div>
+
+                <div id="pip-path" class="tab-content">
+                    <pre><code class="language-bash"># Verify installation
+pip show astrobob
+
+# If not installed
+pip install git+https://github.com/aboivz/astrobob.git
+
+# Check if in PATH
+which astrobob
+
+# If not found, use full path
+python -m astrobob.cli.app --help</code></pre>
+                </div>
+
+                <div id="pipx-path" class="tab-content">
+                    <pre><code class="language-bash"># Verify installation
+pipx list
+
+# If not installed
+pipx install git+https://github.com/aboivz/astrobob.git
+
+# Ensure pipx bin directory in PATH
+pipx ensurepath</code></pre>
+                </div>
+
+                <h3 id="python-version">❌ "Python 3.12+ required"</h3>
+
+                <h4>Cause</h4>
+                <p>AstroBob requires Python 3.12 or higher.</p>
+
+                <h4>Solution</h4>
+                <pre><code class="language-bash"># Check current version
+python --version
+
+# Install Python 3.12+ (Ubuntu/Debian)
+sudo apt update
+sudo apt install python3.12
+
+# Install Python 3.12+ (macOS with Homebrew)
+brew install python@3.12
+
+# Install Python 3.12+ (Windows)
+# Download from python.org
+
+# Use pyenv for version management
+pyenv install 3.12.0
+pyenv local 3.12.0</code></pre>
+
+                <h3 id="dependency-conflicts">❌ Dependency conflicts</h3>
+
+                <h4>Cause</h4>
+                <p>Conflicting package versions in your environment.</p>
+
+                <h4>Solution</h4>
+                <pre><code class="language-bash"># Use uv (recommended - handles conflicts automatically)
+uv tool install astrobob
+
+# Or create isolated environment with pipx
+pipx install git+https://github.com/aboivz/astrobob.git
+
+# Or use virtual environment
+python -m venv .venv
+source .venv/bin/activate  # Linux/macOS
+# .venv\Scripts\activate  # Windows
+pip install git+https://github.com/aboivz/astrobob.git</code></pre>
+
+                <hr>
+
+                <h2 id="configuration-issues">Configuration Issues</h2>
+
+                <h3 id="missing-env-vars">❌ "Missing environment variable: ASTRA_DB_API_ENDPOINT"</h3>
+
+                <h4>Cause</h4>
+                <p>Required environment variables not set.</p>
+
+                <h4>Solution</h4>
+                <pre><code class="language-bash"># Create .env file in project directory
+cat > .env << 'EOF'
+ASTRA_DB_API_ENDPOINT=https://xxx-us-east-2.apps.astra.datastax.com
+ASTRA_DB_APPLICATION_TOKEN=AstraCS:xxxxxxxxxxxxx
+ASTRA_DB_KEYSPACE=default_keyspace
+ASTROBOB_COLLECTION_PREFIX=astrobob
+EOF
+
+# Verify .env file exists
+ls -la .env
+
+# Check if variables are loaded
+astrobob doctor</code></pre>
+
+                <div class="alert alert-warning">
+                    <strong>⚠️ Important:</strong> The <code>.env</code> file must be in the directory where you run <code>astrobob</code> commands.
+                </div>
+
+                <h3 id="wrong-directory">❌ "No .env file found"</h3>
+
+                <h4>Cause</h4>
+                <p>Running commands from wrong directory.</p>
+
+                <h4>Solution</h4>
+                <pre><code class="language-bash"># Navigate to project directory
+cd ~/projects/my-project
+
+# Verify .env exists
+ls -la .env
+
+# Or specify project explicitly
+export ASTROBOB_PROJECT=my-project</code></pre>
+
+                <h3 id="invalid-credentials">❌ "Authentication failed"</h3>
+
+                <h4>Cause</h4>
+                <p>Invalid or expired AstraDB credentials.</p>
+
+                <h4>Solution</h4>
+                <ol>
+                    <li>Go to <a href="https://astra.datastax.com" target="_blank">astra.datastax.com</a></li>
+                    <li>Navigate to your database</li>
+                    <li>Click <strong>"Connect"</strong> → <strong>"Generate Token"</strong></li>
+                    <li>Copy new token (starts with <code>AstraCS:</code>)</li>
+                    <li>Update <code>.env</code> file with new token</li>
+                    <li>Test: <code>astrobob astra status</code></li>
+                </ol>
+
+                <div class="alert alert-danger">
+                    <strong>🔒 Security:</strong> Never commit <code>.env</code> to git. Add it to <code>.gitignore</code>.
+                </div>
+
+                <hr>
+
+                <h2 id="astradb-issues">AstraDB Issues</h2>
+
+                <h3 id="connection-refused">❌ "Connection refused" or "Timeout"</h3>
+
+                <h4>Possible Causes</h4>
+                <ul>
+                    <li>Wrong API endpoint URL</li>
+                    <li>Network/firewall issues</li>
+                    <li>AstraDB database not active</li>
+                </ul>
+
+                <h4>Solutions</h4>
+                <pre><code class="language-bash"># 1. Verify endpoint URL format
+# Should be: https://xxx-region.apps.astra.datastax.com
+echo $ASTRA_DB_API_ENDPOINT
+
+# 2. Test connectivity
+curl -I $ASTRA_DB_API_ENDPOINT
+
+# 3. Check database status in Astra UI
+# Database should show "Active" status
+
+# 4. Try different region (if available)
+# Update ASTRA_DB_API_ENDPOINT in .env
+
+# 5. Check firewall/proxy settings
+# Ensure HTTPS (443) is allowed</code></pre>
+
+                <h3 id="collection-not-found">❌ "Collection not found"</h3>
+
+                <h4>Cause</h4>
+                <p>Collections not created yet.</p>
+
+                <h4>Solution</h4>
+                <pre><code class="language-bash"># Create collections
+astrobob astra setup
+
+# Verify collections exist
+astrobob astra status
+
+# Expected output:
+# ✓ astrobob_semantic_memory (0 documents)
+# ✓ astrobob_episodic_memory (0 documents)
+# ✓ astrobob_procedural_memory (0 documents)</code></pre>
+
+                <h3 id="rate-limit">❌ "Rate limit exceeded"</h3>
+
+                <h4>Cause</h4>
+                <p>Too many requests to AstraDB.</p>
+
+                <h4>Solution</h4>
+                <pre><code class="language-bash"># Wait a few seconds and retry
+
+# For bulk operations, add delays
+for id in $(cat memory_ids.txt); do
+  astrobob memory recall "$id"
+  sleep 0.5  # 500ms delay
+done
+
+# Consider upgrading AstraDB tier for higher limits</code></pre>
+
+                <h3 id="vectorize-error">❌ "Vectorize service error"</h3>
+
+                <h4>Cause</h4>
+                <p>AstraDB vectorize service issue (rare).</p>
+
+                <h4>Solution</h4>
+                <pre><code class="language-bash"># 1. Check AstraDB status page
+# https://status.datastax.com
+
+# 2. Verify region supports vectorize
+# Recommended: us-east-2
+
+# 3. Recreate collections (last resort)
+astrobob astra setup --drop-existing
+
+# ⚠️ WARNING: This deletes all data!</code></pre>
+
+                <hr>
+
+                <h2 id="bob-integration-issues">Bob Integration Issues</h2>
+
+                <h3 id="bob-no-tools">❌ Bob doesn't see MCP tools</h3>
+
+                <h4>Possible Causes</h4>
+                <ul>
+                    <li>MCP server not configured</li>
+                    <li>Bob not in Advanced mode</li>
+                    <li>Wrong <code>mcp.json</code> path</li>
+                </ul>
+
+                <h4>Solutions</h4>
+                <pre><code class="language-bash"># 1. Verify .bob/mcp.json exists
+cat .bob/mcp.json
+
+# 2. Ensure correct format
+{
+  "mcpServers": {
+    "astrobob": {
+      "command": "astrobob",
+      "args": ["mcp"],
+      "env": {
+        "ASTRA_DB_API_ENDPOINT": "...",
+        "ASTRA_DB_APPLICATION_TOKEN": "..."
+      }
+    }
+  }
+}
+
+# 3. Test MCP server manually
+astrobob mcp --http
+# Then open http://localhost:8765 in browser
+
+# 4. Restart Bob
+# Close and reopen Bob application
+
+# 5. Verify Bob is in Advanced mode
+# Check Bob settings/preferences</code></pre>
+
+                <h3 id="bob-tool-errors">❌ Bob tool calls fail</h3>
+
+                <h4>Cause</h4>
+                <p>MCP server errors or invalid parameters.</p>
+
+                <h4>Solution</h4>
+                <pre><code class="language-bash"># 1. Check MCP server logs
+# Look for error messages in terminal where MCP server runs
+
+# 2. Test tools directly
+astrobob memory remember \
+  --type semantic \
+  --content "Test memory" \
+  --importance 3
+
+# 3. Verify environment variables in mcp.json
+# Ensure they match your .env file
+
+# 4. Run doctor
+astrobob doctor
+
+# 5. Restart MCP server
+# Kill existing process and restart:
+astrobob mcp</code></pre>
+
+                <h3 id="bob-slow-response">❌ Bob MCP calls are slow</h3>
+
+                <h4>Possible Causes</h4>
+                <ul>
+                    <li>Network latency to AstraDB</li>
+                    <li>Large result sets</li>
+                    <li>Cold start (first query)</li>
+                </ul>
+
+                <h4>Solutions</h4>
+                <pre><code class="language-bash"># 1. Use closer AstraDB region
+# Update to nearest region in Astra UI
+
+# 2. Limit result count
+recall({
+  "query": "...",
+  "limit": 5  # Instead of default 10
+})
+
+# 3. Filter by importance
+recall({
+  "query": "...",
+  "min_importance": 4  # Only important memories
+})
+
+# 4. Use specific memory types
+recall({
+  "query": "...",
+  "memory_type": "procedural"  # Instead of "all"
+})</code></pre>
+
+                <hr>
+
+                <h2 id="memory-issues">Memory Issues</h2>
+
+                <h3 id="no-results">❌ "No memories found" but I stored some</h3>
+
+                <h4>Possible Causes</h4>
+                <ul>
+                    <li>Wrong project filter</li>
+                    <li>Memories soft-deleted</li>
+                    <li>Query doesn't match content</li>
+                </ul>
+
+                <h4>Solutions</h4>
+                <pre><code class="language-bash"># 1. Check all projects
+astrobob memory report
+
+# 2. Try broader query
+astrobob memory recall "anything" --limit 50
+
+# 3. Check specific type
+astrobob memory recall "test" --type semantic
+astrobob memory recall "test" --type episodic
+astrobob memory recall "test" --type procedural
+
+# 4. Verify not deleted
+# Deleted memories have deleted_at timestamp
+
+# 5. Check AstraDB Studio directly
+# Log into Astra UI → Data Explorer</code></pre>
+
+                <h3 id="wrong-results">❌ Recall returns irrelevant results</h3>
+
+                <h4>Cause</h4>
+                <p>Query too broad or memories not well-tagged.</p>
+
+                <h4>Solutions</h4>
+                <pre><code class="language-bash"># 1. Use more specific queries
+# Bad:  "api"
+# Good: "how to add API endpoint with authentication"
+
+# 2. Filter by tags
+astrobob memory recall "api" --tags api,auth
+
+# 3. Filter by importance
+astrobob memory recall "api" --min-importance 4
+
+# 4. Use specific memory type
+astrobob memory recall "how to" --type procedural
+
+# 5. Improve memory content
+# Store more detailed, specific memories</code></pre>
+
+                <h3 id="duplicate-memories">❌ Duplicate memories</h3>
+
+                <h4>Cause</h4>
+                <p>Same information stored multiple times.</p>
+
+                <h4>Solutions</h4>
+                <pre><code class="language-bash"># 1. Search before storing
+astrobob memory recall "topic" --type semantic
+
+# 2. Delete duplicates
+astrobob memory forget --type semantic --id 01HXXX...
+
+# 3. Use supersedes for updates
+# When storing updated version, note old ID
+
+# 4. Regular cleanup
+# Weekly review and remove outdated memories</code></pre>
+
+                <hr>
+
+                <h2 id="skills-issues">Skills Export Issues</h2>
+
+                <h3 id="no-skills-exported">❌ "No skills to export"</h3>
+
+                <h4>Cause</h4>
+                <p>No procedural memories meet importance threshold.</p>
+
+                <h4>Solution</h4>
+                <pre><code class="language-bash"># 1. Check procedural memories
+astrobob memory recall "procedure" --type procedural
+
+# 2. Lower importance threshold
+astrobob skills sync --min-importance 3
+
+# 3. Create procedural memories
+astrobob memory remember \
+  --type procedural \
+  --content "How to do X: step 1, step 2..." \
+  --importance 4
+
+# 4. Use dry-run to preview
+astrobob skills sync --dry-run</code></pre>
+
+                <h3 id="skill-not-loaded">❌ Bob doesn't use exported skills</h3>
+
+                <h4>Cause</h4>
+                <p>Skills not in correct location or format.</p>
+
+                <h4>Solution</h4>
+                <pre><code class="language-bash"># 1. Verify skill files exist
+ls -la .bob/skills/learned/
+
+# 2. Check SKILL.md format
+cat .bob/skills/learned/*/SKILL.md
+
+# 3. Restart Bob
+# Close and reopen Bob application
+
+# 4. Verify Bob skills directory
+# Check Bob settings for skills path
+
+# 5. Re-export with force
+astrobob skills sync --force</code></pre>
+
+                <hr>
+
+                <h2 id="performance-issues">Performance Issues</h2>
+
+                <h3 id="slow-queries">❌ Slow recall queries</h3>
+
+                <h4>Solutions</h4>
+                <pre><code class="language-bash"># 1. Reduce result limit
+astrobob memory recall "query" --limit 5
+
+# 2. Use specific memory type
+astrobob memory recall "query" --type procedural
+
+# 3. Filter by tags
+astrobob memory recall "query" --tags specific-tag
+
+# 4. Check AstraDB region latency
+# Use region closest to you
+
+# 5. Monitor with audit trail
+astrobob memory audit --type procedural --id 01HXXX...</code></pre>
+
+                <h3 id="large-database">❌ Too many memories, slow performance</h3>
+
+                <h4>Solutions</h4>
+                <pre><code class="language-bash"># 1. Clean up old memories
+astrobob memory recall "old" --format json | \
+  jq -r '.results[] | select(.importance < 3) | .memory_id' | \
+  xargs -I {} astrobob memory forget --type episodic --id {}
+
+# 2. Archive by project
+# Export memories to JSON, then delete
+astrobob memory report --format json > archive.json
+
+# 3. Use importance filters
+# Only query important memories
+astrobob memory recall "query" --min-importance 4
+
+# 4. Separate projects
+# Use different collection prefixes per project
+ASTROBOB_COLLECTION_PREFIX=project1 astrobob astra setup</code></pre>
+
+                <hr>
+
+                <h2 id="common-errors">Common Error Messages</h2>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Error</th>
+                            <th>Meaning</th>
+                            <th>Fix</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>ConfigError</code></td>
+                            <td>Missing/invalid config</td>
+                            <td>Check <code>.env</code>, run <code>astrobob doctor</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>AstraConnectionError</code></td>
+                            <td>Can't connect to AstraDB</td>
+                            <td>Verify credentials, check network</td>
+                        </tr>
+                        <tr>
+                            <td><code>MemoryNotFoundError</code></td>
+                            <td>Memory ID doesn't exist</td>
+                            <td>Verify ID with <code>recall()</code></td>
+                        </tr>
+                        <tr>
+                            <td><code>ValidationError</code></td>
+                            <td>Invalid parameters</td>
+                            <td>Check parameter types/ranges</td>
+                        </tr>
+                        <tr>
+                            <td><code>ImportError</code></td>
+                            <td>Missing dependencies</td>
+                            <td>Reinstall: <code>uv tool install astrobob</code></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <hr>
+
+                <h2 id="getting-help">Getting Help</h2>
+
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <h3>📖 Documentation</h3>
+                        <p>Check the <a href="faq.html">FAQ</a> for common questions</p>
+                    </div>
+
+                    <div class="feature-card">
+                        <h3>🐛 GitHub Issues</h3>
+                        <p><a href="https://github.com/aboivz/astrobob/issues" target="_blank">Report bugs</a> or request features</p>
+                    </div>
+
+                    <div class="feature-card">
+                        <h3>💬 Community</h3>
+                        <p>Join IBM Community Slack or lablab Discord</p>
+                    </div>
+
+                    <div class="feature-card">
+                        <h3>🔍 Debug Mode</h3>
+                        <p>Run with <code>--verbose</code> for detailed logs</p>
+                    </div>
+                </div>
+
+                <h2 id="debug-checklist">Debug Checklist</h2>
+
+                <p>Before reporting an issue, please check:</p>
+
+                <div class="alert alert-info">
+                    <ul>
+                        <li>✅ Ran <code>astrobob doctor</code></li>
+                        <li>✅ Checked <code>.env</code> file exists and is correct</li>
+                        <li>✅ Verified Python version (3.12+)</li>
+                        <li>✅ Tested AstraDB connection: <code>astrobob astra status</code></li>
+                        <li>✅ Checked this troubleshooting guide</li>
+                        <li>✅ Searched <a href="https://github.com/aboivz/astrobob/issues" target="_blank">existing issues</a></li>
+                        <li>✅ Tried with <code>--verbose</code> flag</li>
+                    </ul>
+                </div>
+
+                <h2 id="reporting-bugs">Reporting Bugs</h2>
+
+                <p>When reporting issues, please include:</p>
+
+                <pre><code class="language-bash"># 1. Version info
+astrobob --version
+python --version
+
+# 2. Doctor output
+astrobob doctor
+
+# 3. Error message (with --verbose)
+astrobob memory recall "test" --verbose
+
+# 4. Environment (sanitized)
+cat .env | sed 's/AstraCS:.*/AstraCS:REDACTED/'
+
+# 5. Steps to reproduce
+# Exact commands that cause the issue</code></pre>
+
+                <div class="nav-footer">
+                    <a href="mcp-tools.html" class="nav-prev">← MCP Tools</a>
+                    <a href="faq.html" class="nav-next">FAQ →</a>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 AstroBob. Open source under MIT License.</p>
+            <p>
+                <a href="https://github.com/aboivz/astrobob">GitHub</a> •
+                <a href="https://github.com/aboivz/astrobob/issues">Issues</a> •
+                <a href="https://github.com/aboivz/astrobob/blob/main/LICENSE">License</a>
+            </p>
+        </div>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js"></script>
+    <script src="search.js"></script>
+    <script>
+        function showTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            document.querySelectorAll('.tab-button').forEach(button => {
+                button.classList.remove('active');
+            });
+            document.getElementById(tabId).classList.add('active');
+            event.target.classList.add('active');
+        }
+    </script>
+</body>
+</html>
