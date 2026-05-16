@@ -52,6 +52,8 @@ astrobob --version
 
 ### 1.2 Configure AstraDB Credentials
 
+**IMPORTANT**: Database must be in **AWS `us-east-2`** or **GCP `us-east1`** for NVIDIA embedding integration.
+
 ```bash
 # Navigate to project directory
 cd ~/projects/ecommerce-platform
@@ -65,11 +67,11 @@ nano .env
 
 Add your credentials:
 ```env
-ASTRA_DB_API_ENDPOINT=https://YOUR_DATABASE_ID-YOUR_REGION.apps.astra.datastax.com
+ASTRA_DB_API_ENDPOINT=https://YOUR_DATABASE_ID-us-east-2.apps.astra.datastax.com
 ASTRA_DB_APPLICATION_TOKEN=AstraCS:YOUR_TOKEN_HERE
 ```
 
-**✅ Checkpoint**: `.env` contains valid credentials
+**✅ Checkpoint**: `.env` contains valid credentials from supported region
 
 ---
 
@@ -95,18 +97,24 @@ astrobob init
 ### 1.4 Setup Collections
 
 ```bash
-# Create memory collections
+# Create memory collections with NVIDIA embedding integration
 astrobob astra setup
 ```
 
 **Expected**:
 ```
-✓ astrobob_semantic_memory
-✓ astrobob_episodic_memory
-✓ astrobob_procedural_memory
+✓ astrobob_semantic_memory (nvidia/nv-embedqa-e5-v5, 1024 dims)
+✓ astrobob_episodic_memory (nvidia/nv-embedqa-e5-v5, 1024 dims)
+✓ astrobob_procedural_memory (nvidia/nv-embedqa-e5-v5, 1024 dims)
 ```
 
-**✅ Checkpoint**: Collections visible in AstraDB Studio
+**What's Happening**:
+- Collections configured with NVIDIA `nvidia/nv-embedqa-e5-v5` embedding model
+- Automatic embedding generation via `$vectorize` field
+- 1024-dimensional vectors for semantic search
+- Cosine similarity metric
+
+**✅ Checkpoint**: Collections visible in AstraDB Studio with vector configuration
 
 ---
 
@@ -178,15 +186,21 @@ Remember this as our project architecture."
 
 Bob: [Uses remember() tool]
 ✓ Stored semantic memory: "Project architecture and tech stack"
+✓ Embedding generated automatically via NVIDIA integration
 ```
 
 **Test CLI Verification**:
 ```bash
 # View stored memory
 astrobob memory report --project ecommerce-platform
+
+# Test vector search
+astrobob memory recall "tech stack" --project ecommerce-platform
 ```
 
-**Expected**: Shows 1 semantic memory
+**Expected**:
+- Shows 1 semantic memory
+- Recall returns the memory with high similarity score
 
 ---
 
@@ -414,21 +428,33 @@ mv .env.backup .env
 
 ---
 
-### 5.5 Search & Retrieval
+### 5.5 Search & Retrieval with Vector Embeddings
 
 **Test Query Routing**:
 ```bash
-# Semantic query
-astrobob memory recall --query "what is our tech stack"
+# Semantic query (uses NVIDIA embeddings for similarity search)
+astrobob memory recall "what is our tech stack" --project ecommerce-platform
 
-# Procedural query
-astrobob memory recall --query "how to add webhook"
+# Procedural query (prioritizes procedural memories)
+astrobob memory recall "how to add webhook" --project ecommerce-platform
 
-# Episodic query
-astrobob memory recall --query "what bugs did we fix"
+# Episodic query (prioritizes episodic memories)
+astrobob memory recall "what bugs did we fix" --project ecommerce-platform
+
+# Test with filters
+astrobob memory recall "payment" --project ecommerce-platform --type procedural --min-importance 4
 ```
 
-**Expected**: Different memory types returned based on query intent
+**Expected**:
+- Different memory types returned based on query intent
+- Results ranked by vector similarity + importance + recency
+- Similarity scores shown in output
+
+**How It Works**:
+1. Query text → NVIDIA embedding (automatic via `$vectorize`)
+2. Vector similarity search in AstraDB
+3. Results ranked by combined score
+4. Most relevant memories returned
 
 ---
 
@@ -647,13 +673,37 @@ astrobob doctor
 ```
 
 ### Search Returns No Results
+
+**Common Causes**:
+1. Wrong project name (memories stored in different project)
+2. Database not in supported region (us-east-2 or us-east1)
+3. Collections not recreated after fixes
+4. Indexing delay (wait 2-3 seconds after insert)
+
+**Troubleshooting**:
 ```bash
 # Check memory count
-astrobob memory report
+astrobob memory report --project ecommerce-platform
 
-# Try broader query
-astrobob memory recall --query "project"
+# Verify database region in AstraDB Portal
+# Must be us-east-2 or us-east1 for NVIDIA integration
+
+# Recreate collections if needed
+astrobob astra setup
+
+# Test with exact project name
+astrobob memory recall "test" --project ecommerce-platform
+
+# Wait for indexing
+sleep 3
+astrobob memory recall "test" --project ecommerce-platform
 ```
+
+**If Still No Results**:
+1. Check `.env` credentials are correct
+2. Verify database is in supported region
+3. Run `python scripts/test_fixes.py` to validate setup
+4. Check AstraDB Studio for collection configuration
 
 ---
 
