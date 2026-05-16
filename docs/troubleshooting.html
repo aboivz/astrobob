@@ -309,6 +309,56 @@ astrobob astra setup --drop-existing
                 <hr>
 
                 <h2 id="bob-integration-issues">Bob Integration Issues</h2>
+                <h3 id="invalid-mcp-json">❌ Invalid MCP settings JSON format error</h3>
+
+                <h4>Symptoms</h4>
+                <p>When running <code>astrobob mcp serve</code> and trying to connect Bob, you see:</p>
+                <pre><code>Invalid MCP settings JSON format. Please check your settings file for syntax errors.</code></pre>
+
+                <h4>Cause</h4>
+                <p>The <code>.bob/mcp.json</code> file has incorrect command format. Older versions used Python module execution which is not compatible with Bob's MCP client.</p>
+
+                <h4>Solution</h4>
+                <pre><code class="language-bash"># 1. Check your current mcp.json format
+cat .bob/mcp.json
+
+# 2. If you see this (INCORRECT):
+{
+  "mcpServers": {
+    "astrobob": {
+      "command": "/path/to/python.exe",
+      "args": ["-m", "astrobob.mcp_server.server"],
+      ...
+    }
+  }
+}
+
+# 3. Update to this (CORRECT):
+{
+  "mcpServers": {
+    "astrobob": {
+      "command": "astrobob",
+      "args": ["mcp", "serve"],
+      "env": {
+        "ASTRA_DB_API_ENDPOINT": "your-endpoint",
+        "ASTRA_DB_APPLICATION_TOKEN": "your-token"
+      }
+    }
+  }
+}
+
+# 4. Or regenerate with latest version:
+astrobob init --force
+
+# 5. Verify the fix:
+astrobob mcp test</code></pre>
+
+                <div class="note">
+                    <strong>Note:</strong> If you installed AstroBob before this fix, run <code>astrobob init --force</code> to regenerate the configuration with the correct format.
+                </div>
+
+                <hr>
+
 
                 <h3 id="bob-no-tools">❌ Bob doesn't see MCP tools</h3>
 
@@ -328,7 +378,7 @@ cat .bob/mcp.json
   "mcpServers": {
     "astrobob": {
       "command": "astrobob",
-      "args": ["mcp"],
+      "args": ["mcp", "serve"],
       "env": {
         "ASTRA_DB_API_ENDPOINT": "...",
         "ASTRA_DB_APPLICATION_TOKEN": "..."
@@ -338,8 +388,8 @@ cat .bob/mcp.json
 }
 
 # 3. Test MCP server manually
-astrobob mcp --http
-# Then open http://localhost:8765 in browser
+astrobob mcp serve
+# Server should start without errors
 
 # 4. Restart Bob
 # Close and reopen Bob application
@@ -370,7 +420,7 @@ astrobob doctor
 
 # 5. Restart MCP server
 # Kill existing process and restart:
-astrobob mcp</code></pre>
+astrobob mcp serve</code></pre>
 
                 <h3 id="bob-slow-response">❌ Bob MCP calls are slow</h3>
 

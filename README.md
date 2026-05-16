@@ -175,10 +175,10 @@ AstroBob integrates seamlessly with IBM Bob via MCP (Model Context Protocol).
 
 ```bash
 # STDIO mode (default for Bob)
-astrobob mcp
+astrobob mcp serve
 
-# HTTP mode (for debugging)
-astrobob mcp --http
+# HTTP mode (for debugging - not yet implemented)
+astrobob mcp serve --transport http
 ```
 
 #### 2. Bob Configuration
@@ -190,7 +190,7 @@ The `astrobob init` command creates `.bob/mcp.json` with the correct configurati
   "mcpServers": {
     "astrobob": {
       "command": "astrobob",
-      "args": ["mcp"],
+      "args": ["mcp", "serve"],
       "env": {
         "ASTRA_DB_API_ENDPOINT": "your-endpoint",
         "ASTRA_DB_APPLICATION_TOKEN": "your-token"

@@ -101,7 +101,7 @@
 
                 <h3>1. Start the MCP Server</h3>
                 <pre><code class="language-bash"># In your project directory
-astrobob mcp</code></pre>
+astrobob mcp serve</code></pre>
 
                 <h3>2. Configure Bob</h3>
                 <p>The <code>astrobob init</code> command creates <code>.bob/mcp.json</code>:</p>
@@ -110,7 +110,7 @@ astrobob mcp</code></pre>
   "mcpServers": {
     "astrobob": {
       "command": "astrobob",
-      "args": ["mcp"],
+      "args": ["mcp", "serve"],
       "env": {
         "ASTRA_DB_API_ENDPOINT": "https://xxx.apps.astra.datastax.com",
         "ASTRA_DB_APPLICATION_TOKEN": "AstraCS:xxxxx"

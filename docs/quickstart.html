@@ -213,11 +213,11 @@ Recent Episodes (last 7 days):
                 <h3>6.1 Start MCP Server</h3>
                 <p>AstroBob includes an MCP server that Bob can connect to:</p>
 
-                <pre><code class="language-bash"># Start in STDIO mode (default)
-astrobob mcp
+                <pre><code class="language-bash"># Start in STDIO mode (default for Bob)
+astrobob mcp serve
 
-# Or start in HTTP mode
-astrobob mcp --http</code></pre>
+# Or start in HTTP mode (for debugging - not yet implemented)
+astrobob mcp serve --transport http</code></pre>
 
                 <h3>6.2 Configure Bob</h3>
                 <p>The <code>astrobob init</code> command already created <code>.bob/mcp.json</code>. Verify it looks like this:</p>
@@ -226,7 +226,7 @@ astrobob mcp --http</code></pre>
   "mcpServers": {
     "astrobob": {
       "command": "astrobob",
-      "args": ["mcp"],
+      "args": ["mcp", "serve"],
       "env": {
         "ASTRA_DB_API_ENDPOINT": "https://xxx.apps.astra.datastax.com",
         "ASTRA_DB_APPLICATION_TOKEN": "AstraCS:xxxxx"

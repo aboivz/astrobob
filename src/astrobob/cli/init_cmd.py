@@ -27,9 +27,6 @@ def get_templates_dir() -> Path:
     return Path(__file__).parent.parent / "templates"
 
 
-def get_python_path() -> str:
-    """Get the current Python interpreter path."""
-    return sys.executable
 
 
 @app.command()
@@ -103,11 +100,8 @@ def init(
         astra_endpoint = "https://YOUR_DATABASE_ID-YOUR_REGION.apps.astra.datastax.com"
         astra_token = "AstraCS:YOUR_TOKEN_HERE"
     
-    python_path = get_python_path()
-    
     # Template context
     context = {
-        "python_path": python_path,
         "astra_endpoint": astra_endpoint,
         "astra_token": astra_token,
     }
@@ -188,9 +182,10 @@ def init(
             "[bold]Next Steps:[/bold]\n\n"
             "1. Copy .env.example to .env and fill in your AstraDB credentials\n"
             "2. Run: [cyan]astrobob astra setup[/cyan] to create collections\n"
-            "3. Configure Bob to use the MCP server (see .bob/mcp.json)\n"
-            "4. Enable the AstroBob Builder mode in Bob (see .bob/custom_modes.yaml)\n"
-            "5. Start using memory-aware development!\n\n"
+            "3. Start MCP server: [cyan]astrobob mcp serve[/cyan]\n"
+            "4. Configure Bob to use the MCP server (see .bob/mcp.json)\n"
+            "5. Enable the AstroBob Builder mode in Bob (see .bob/custom_modes.yaml)\n"
+            "6. Start using memory-aware development!\n\n"
             "[dim]For more information, see the documentation.[/dim]",
             title="Setup Complete",
             border_style="green",

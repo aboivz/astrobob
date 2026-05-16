@@ -1,10 +1,10 @@
 {
   "mcpServers": {
     "astrobob": {
-      "command": "{{ python_path }}",
+      "command": "astrobob",
       "args": [
-        "-m",
-        "astrobob.mcp_server.server"
+        "mcp",
+        "serve"
       ],
       "env": {
         "ASTRA_DB_API_ENDPOINT": "{{ astra_endpoint }}",
