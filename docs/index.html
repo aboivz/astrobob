@@ -10,77 +10,52 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css">
 </head>
 <body>
-    <!-- Header -->
-    <header class="header">
-        <div class="header-content">
-            <a href="index.html" class="logo">
-                <span class="logo-icon">🧠</span>
-                <span>AstroBob</span>
-            </a>
-            <nav class="nav">
-                <a href="index.html" class="nav-link active">Home</a>
-                <a href="installation.html" class="nav-link">Installation</a>
-                <a href="quickstart.html" class="nav-link">Quick Start</a>
-                <a href="api-reference.html" class="nav-link">API</a>
-                <a href="https://github.com/aboivz/astrobob" class="nav-link" target="_blank">GitHub</a>
-            </nav>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <span class="logo-icon">🧠</span>
+                    <span class="logo-text">AstroBob</span>
+                </div>
+                <nav class="main-nav">
+                    <a href="index.html" class="active">Home</a>
+                    <a href="quickstart.html">Quick Start</a>
+                    <a href="installation.html">Installation</a>
+                    <a href="https://github.com/aboivz/astrobob" target="_blank">GitHub</a>
+                </nav>
+            </div>
         </div>
     </header>
 
-    <!-- Main Layout -->
-    <div class="main-layout">
-        <!-- Sidebar -->
-        <aside class="sidebar">
-            <div class="search-box">
-                <span class="search-icon">🔍</span>
-                <input type="text" class="search-input" placeholder="Search docs..." id="searchInput">
-            </div>
-            
-            <div class="sidebar-section">
-                <h3 class="sidebar-title">Getting Started</h3>
-                <ul class="sidebar-menu">
-                    <li><a href="index.html" class="sidebar-link active">Overview</a></li>
-                    <li><a href="installation.html" class="sidebar-link">Installation</a></li>
-                    <li><a href="quickstart.html" class="sidebar-link">Quick Start</a></li>
-                    <li><a href="configuration.html" class="sidebar-link">Configuration</a></li>
-                </ul>
-            </div>
+    <div class="container">
+        <div class="docs-layout">
+            <aside class="sidebar">
+                <div class="search-box">
+                    <input type="text" id="searchInput" placeholder="Search docs...">
+                </div>
+                <nav class="sidebar-nav">
+                    <div class="nav-section">
+                        <div class="nav-section-title">Getting Started</div>
+                        <a href="quickstart.html">Quick Start</a>
+                        <a href="installation.html">Installation</a>
+                    </div>
+                    <div class="nav-section">
+                        <div class="nav-section-title">Usage</div>
+                        <a href="cli-reference.html">CLI Reference</a>
+                        <a href="mcp-tools.html">MCP Tools</a>
+                    </div>
+                    <div class="nav-section">
+                        <div class="nav-section-title">Reference</div>
+                        <a href="troubleshooting.html">Troubleshooting</a>
+                        <a href="faq.html">FAQ</a>
+                    </div>
+                </nav>
+            </aside>
 
-            <div class="sidebar-section">
-                <h3 class="sidebar-title">Core Concepts</h3>
-                <ul class="sidebar-menu">
-                    <li><a href="memory-types.html" class="sidebar-link">Memory Types</a></li>
-                    <li><a href="architecture.html" class="sidebar-link">Architecture</a></li>
-                    <li><a href="ranking-system.html" class="sidebar-link">Ranking System</a></li>
-                </ul>
-            </div>
-
-            <div class="sidebar-section">
-                <h3 class="sidebar-title">Usage</h3>
-                <ul class="sidebar-menu">
-                    <li><a href="cli-reference.html" class="sidebar-link">CLI Reference</a></li>
-                    <li><a href="mcp-tools.html" class="sidebar-link">MCP Tools</a></li>
-                    <li><a href="bob-integration.html" class="sidebar-link">Bob Integration</a></li>
-                    <li><a href="wxo-integration.html" class="sidebar-link">WxO Integration</a></li>
-                </ul>
-            </div>
-
-            <div class="sidebar-section">
-                <h3 class="sidebar-title">Reference</h3>
-                <ul class="sidebar-menu">
-                    <li><a href="api-reference.html" class="sidebar-link">API Reference</a></li>
-                    <li><a href="data-models.html" class="sidebar-link">Data Models</a></li>
-                    <li><a href="troubleshooting.html" class="sidebar-link">Troubleshooting</a></li>
-                    <li><a href="faq.html" class="sidebar-link">FAQ</a></li>
-                </ul>
-            </div>
-        </aside>
-
-        <!-- Main Content -->
-        <main class="content">
+            <main class="content">
             <h1>AstroBob Documentation</h1>
             
-            <p class="lead" style="font-size: 1.25rem; color: var(--text-secondary); margin-bottom: var(--spacing-xl);">
+            <p class="lead">
                 Memory-Powered Agent Toolkit for IBM Bob. Give your AI agents persistent semantic, episodic, and procedural memory via AstraDB.
             </p>
 
@@ -91,44 +66,44 @@
 
             <h2>Key Features</h2>
             
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: var(--spacing-lg); margin-bottom: var(--spacing-2xl);">
-                <div style="padding: var(--spacing-lg); border: 1px solid var(--border-color); border-radius: var(--radius-md);">
-                    <h3 style="margin-top: 0;">🧠 Three Memory Types</h3>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>🧠 Three Memory Types</h3>
                     <p><strong>Semantic</strong> - Stable facts and knowledge<br>
                     <strong>Episodic</strong> - Events and experiences<br>
                     <strong>Procedural</strong> - Reusable how-to procedures</p>
                 </div>
                 
-                <div style="padding: var(--spacing-lg); border: 1px solid var(--border-color); border-radius: var(--radius-md);">
-                    <h3 style="margin-top: 0;">🔌 MCP Integration</h3>
+                <div class="feature-card">
+                    <h3>🔌 MCP Integration</h3>
                     <p>5 powerful tools for Bob:<br>
                     remember, recall, reflect, forget, audit_trail<br>
                     Seamless integration via Model Context Protocol</p>
                 </div>
                 
-                <div style="padding: var(--spacing-lg); border: 1px solid var(--border-color); border-radius: var(--radius-md);">
-                    <h3 style="margin-top: 0;">📊 Smart Ranking</h3>
+                <div class="feature-card">
+                    <h3>📊 Smart Ranking</h3>
                     <p>Weighted scoring system:<br>
                     55% rerank + 15% importance + 15% recency + 10% success + 5% staleness<br>
                     Always surfaces the most relevant memories</p>
                 </div>
                 
-                <div style="padding: var(--spacing-lg); border: 1px solid var(--border-color); border-radius: var(--radius-md);">
-                    <h3 style="margin-top: 0;">🎓 Self-Improving</h3>
+                <div class="feature-card">
+                    <h3>🎓 Self-Improving</h3>
                     <p>Bob can reflect on experiences and write its own skills<br>
                     Procedural memories → Bob SKILL.md files<br>
                     Creates a self-improvement feedback loop</p>
                 </div>
                 
-                <div style="padding: var(--spacing-lg); border: 1px solid var(--border-color); border-radius: var(--radius-md);">
-                    <h3 style="margin-top: 0;">🚀 Production Ready</h3>
+                <div class="feature-card">
+                    <h3>🚀 Production Ready</h3>
                     <p>Built on AstraDB Serverless<br>
                     Hybrid search with reranking<br>
                     70%+ test coverage, fully typed</p>
                 </div>
                 
-                <div style="padding: var(--spacing-lg); border: 1px solid var(--border-color); border-radius: var(--radius-md);">
-                    <h3 style="margin-top: 0;">🤝 Multi-Agent Support</h3>
+                <div class="feature-card">
+                    <h3>🤝 Multi-Agent Support</h3>
                     <p>WxO integration templates<br>
                     Shared memory across agents<br>
                     Coordination patterns included</p>
@@ -185,15 +160,14 @@ astrobob skills sync</code></pre>
             
             <p>Ready to give your agents persistent memory? Follow these steps:</p>
             
-            <ol style="font-size: 1.0625rem; line-height: 1.8;">
+            <ol>
                 <li><strong><a href="installation.html">Install AstroBob</a></strong> - Get up and running in 5 minutes</li>
-                <li><strong><a href="configuration.html">Configure AstraDB</a></strong> - Set up your database credentials</li>
                 <li><strong><a href="quickstart.html">Quick Start Guide</a></strong> - Store and recall your first memory</li>
-                <li><strong><a href="bob-integration.html">Integrate with Bob</a></strong> - Connect Bob to AstroBob via MCP</li>
                 <li><strong><a href="mcp-tools.html">Explore MCP Tools</a></strong> - Learn all 5 memory tools</li>
+                <li><strong><a href="cli-reference.html">CLI Reference</a></strong> - Complete command reference</li>
             </ol>
 
-            <div class="alert alert-success" style="margin-top: var(--spacing-2xl);">
+            <div class="alert alert-success">
                 <strong>✨ Pro Tip:</strong> Start with the <a href="quickstart.html">Quick Start Guide</a> to see AstroBob in action within 10 minutes!
             </div>
 
@@ -222,56 +196,52 @@ astrobob skills sync</code></pre>
 
             <h2>Community & Support</h2>
             
-            <div style="display: flex; gap: var(--spacing-md); margin-top: var(--spacing-lg);">
+            <div class="d-flex gap-2" style="margin-top: var(--spacing-lg);">
                 <a href="https://github.com/aboivz/astrobob" class="btn btn-primary" target="_blank">
                     View on GitHub
                 </a>
                 <a href="https://github.com/aboivz/astrobob/issues" class="btn btn-secondary" target="_blank">
                     Report an Issue
                 </a>
-                <a href="https://discord.gg/astrobob" class="btn btn-secondary" target="_blank">
-                    Join Discord
-                </a>
             </div>
 
-            <h2 style="margin-top: var(--spacing-2xl);">What's Next?</h2>
+            <h2>What's Next?</h2>
             
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: var(--spacing-md); margin-top: var(--spacing-lg);">
-                <a href="installation.html" style="padding: var(--spacing-lg); border: 2px solid var(--primary-color); border-radius: var(--radius-md); text-decoration: none; transition: all 0.2s ease;">
-                    <h4 style="margin-top: 0; color: var(--primary-color);">📦 Installation</h4>
-                    <p style="margin-bottom: 0; color: var(--text-secondary);">Get AstroBob installed and configured</p>
-                </a>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <h3>📦 Installation</h3>
+                    <p>Get AstroBob installed and configured</p>
+                    <a href="installation.html" class="btn btn-secondary">Get Started →</a>
+                </div>
                 
-                <a href="quickstart.html" style="padding: var(--spacing-lg); border: 2px solid var(--accent-color); border-radius: var(--radius-md); text-decoration: none; transition: all 0.2s ease;">
-                    <h4 style="margin-top: 0; color: var(--accent-color);">🚀 Quick Start</h4>
-                    <p style="margin-bottom: 0; color: var(--text-secondary);">Your first memory in 10 minutes</p>
-                </a>
+                <div class="feature-card">
+                    <h3>🚀 Quick Start</h3>
+                    <p>Your first memory in 10 minutes</p>
+                    <a href="quickstart.html" class="btn btn-secondary">Start Now →</a>
+                </div>
                 
-                <a href="api-reference.html" style="padding: var(--spacing-lg); border: 2px solid var(--secondary-color); border-radius: var(--radius-md); text-decoration: none; transition: all 0.2s ease;">
-                    <h4 style="margin-top: 0; color: var(--secondary-color);">📚 API Reference</h4>
-                    <p style="margin-bottom: 0; color: var(--text-secondary);">Complete API documentation</p>
-                </a>
+                <div class="feature-card">
+                    <h3>📚 CLI Reference</h3>
+                    <p>Complete command reference</p>
+                    <a href="cli-reference.html" class="btn btn-secondary">View Docs →</a>
+                </div>
             </div>
-        </main>
+
+            <div class="nav-footer">
+                <a href="installation.html" class="nav-next">Installation →</a>
+            </div>
+            </main>
+        </div>
     </div>
 
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="footer-content">
-            <div>
-                <p style="margin-bottom: var(--spacing-sm); color: var(--text-secondary);">
-                    &copy; 2026 AstroBob. Built with ❤️ and Bob.
-                </p>
-                <p style="margin: 0; font-size: 0.875rem; color: var(--text-light);">
-                    Licensed under MIT. Powered by AstraDB.
-                </p>
-            </div>
-            <div class="footer-links">
-                <a href="https://github.com/aboivz/astrobob" target="_blank">GitHub</a>
-                <a href="https://github.com/aboivz/astrobob/issues" target="_blank">Issues</a>
-                <a href="https://discord.gg/astrobob" target="_blank">Discord</a>
-                <a href="https://twitter.com/astrobob" target="_blank">Twitter</a>
-            </div>
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 AstroBob. Open source under MIT License.</p>
+            <p>
+                <a href="https://github.com/aboivz/astrobob">GitHub</a> •
+                <a href="https://github.com/aboivz/astrobob/issues">Issues</a> •
+                <a href="https://github.com/aboivz/astrobob/blob/main/LICENSE">License</a>
+            </p>
         </div>
     </footer>
 
