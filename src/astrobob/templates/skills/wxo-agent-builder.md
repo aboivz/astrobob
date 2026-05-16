@@ -1,6 +1,7 @@
-# WxO Agent Builder
-
-## When to use this skill
+---
+name: wxo-agent-builder
+description: Build memory-aware multi-agent systems with IBM watsonx Orchestrate and AstroBob integration
+---
 
 Use this skill when building multi-agent systems with IBM watsonx Orchestrate (WxO), including:
 - Designing agent architectures

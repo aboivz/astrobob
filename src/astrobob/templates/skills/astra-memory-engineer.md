@@ -1,6 +1,7 @@
-# Astra Memory Engineer
-
-## When to use this skill
+---
+name: astra-memory-engineer
+description: Work with AstroBob's memory system including storing, retrieving, and managing memories via MCP tools
+---
 
 Use this skill when working with AstroBob's memory system, including:
 - Storing and retrieving memories via MCP tools

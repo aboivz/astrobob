@@ -1,6 +1,7 @@
-# Agent Reflector
-
-## When to use this skill
+---
+name: agent-reflector
+description: Convert episodic experiences into reusable procedural knowledge through systematic reflection
+---
 
 Use this skill when you need to:
 - Convert episodic experiences into reusable procedural knowledge
