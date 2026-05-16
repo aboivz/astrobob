@@ -5,7 +5,7 @@ Provides high-level operations for storing and retrieving memories
 from AstraDB collections.
 """
 
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Optional, Literal
 
 from astrapy import Database
@@ -59,6 +59,10 @@ class MemoryStore:
             # Convert to dict for insertion, mapping 'id' to '_id'
             doc = memory.model_dump(mode="json")
             doc["_id"] = doc.pop("id")  # AstraDB uses _id
+            
+            # Add $vectorize field for automatic embedding generation
+            # AstraDB will use this to generate vector embeddings
+            doc["$vectorize"] = memory.content
             
             # Insert the document
             result = collection.insert_one(doc)
@@ -203,7 +207,7 @@ class MemoryStore:
             # Update with deleted_at timestamp
             result = collection.update_one(
                 filter={"_id": memory_id},
-                update={"$set": {"deleted_at": datetime.utcnow().isoformat()}},
+                update={"$set": {"deleted_at": datetime.now(timezone.utc).isoformat()}},
             )
             
             if result.update_info["updatedExisting"] is False:
@@ -247,7 +251,7 @@ class MemoryStore:
                 update={
                     "$set": {
                         "exported_as_skill": skill_path,
-                        "exported_at": datetime.utcnow().isoformat(),
+                        "exported_at": datetime.now(timezone.utc).isoformat(),
                     }
                 },
             )
@@ -292,7 +296,7 @@ class MemoryStore:
             collection.update_one(
                 filter={"_id": memory_id},
                 update={
-                    "$set": {"last_accessed_at": datetime.utcnow().isoformat()},
+                    "$set": {"last_accessed_at": datetime.now(timezone.utc).isoformat()},
                     "$inc": {"access_count": 1},
                 },
             )

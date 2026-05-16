@@ -62,8 +62,8 @@ pip install -e .
 
 1. **Get AstraDB Credentials**
    - Sign up at [astra.datastax.com](https://astra.datastax.com)
-   - Create a Serverless database in `us-east-2`
-   - Enable "Hybrid Search" and "Rerank" features
+   - Create a Serverless (vector) database in **AWS `us-east-2`** or **GCP `us-east1`** (required for NVIDIA integration)
+   - The database will automatically support vector search with NVIDIA embeddings
    - Copy your API Endpoint and Application Token
 
 2. **Set Environment Variables**
@@ -132,18 +132,27 @@ astrobob memory remember \
 #### Recall Memories
 
 ```bash
-# Search across all memory types
-astrobob memory recall "how to add MCP tool"
+# Search across all memory types (uses natural language with automatic embedding)
+astrobob memory recall "how to add MCP tool" --project my-project
 
 # Search specific memory type
-astrobob memory recall "authentication" --type episodic
+astrobob memory recall "authentication" --project my-project --type episodic
 
 # Filter by tags
-astrobob memory recall "bug fixes" --tags auth,bug
+astrobob memory recall "bug fixes" --project my-project --tag auth --tag bug
+
+# Filter by importance
+astrobob memory recall "python patterns" --project my-project --min-importance 4
 
 # Limit results
-astrobob memory recall "python" --limit 5
+astrobob memory recall "python" --project my-project --limit 5
 ```
+
+**How it works:**
+- Queries are automatically converted to vector embeddings using NVIDIA's `nvidia/nv-embedqa-e5-v5` model
+- Vector search finds semantically similar memories
+- Results are ranked by relevance, importance, and recency
+- Query intent routing prioritizes the right memory types (e.g., "how to" → procedural first)
 
 #### Reflect on Experiences
 
@@ -257,8 +266,21 @@ This creates `.bob/skills/learned/<skill-name>/SKILL.md` files that Bob can use 
 ┌─────────────▼───────────────────────┐
 │  AstraDB (3 collections)            │
 │  semantic·episodic·procedural       │
+│  NVIDIA nvidia/nv-embedqa-e5-v5     │
+│  Automatic $vectorize embeddings    │
 └─────────────────────────────────────┘
 ```
+
+### Vector Search with NVIDIA Embeddings
+
+AstroBob uses **NVIDIA's `nvidia/nv-embedqa-e5-v5`** embedding model for automatic vector generation:
+
+- **Automatic Embedding**: Content is stored in `$vectorize` field, embeddings generated automatically
+- **1024 dimensions**: High-quality semantic representations
+- **Cosine similarity**: Optimal for semantic search
+- **No manual embedding**: Just store text, AstraDB handles the rest
+
+**Requirements**: Database must be in AWS `us-east-2` or GCP `us-east1` for NVIDIA integration.
 
 ### Memory Types
 
@@ -276,13 +298,19 @@ Memories are ranked using a weighted formula:
 
 ```
 final_score = (
-    0.55 * astra_rerank_score +      # AstraDB's hybrid search score
+    0.55 * vector_similarity_score +  # NVIDIA embedding similarity
     0.15 * (importance / 5.0) +       # User-assigned importance
     0.15 * exp(-age_days / 30) +      # Recency (30-day half-life)
     0.10 * log1p(success_count) / log1p(20) -  # Success tracking
     0.05 * staleness_penalty          # Penalize unaccessed memories
 )
 ```
+
+**Vector Search Process**:
+1. Query text → NVIDIA embedding (automatic via `$vectorize`)
+2. Vector similarity search in AstraDB
+3. Results ranked by combined score
+4. Most relevant memories returned
 
 This ensures the most relevant, important, and recent memories surface first.
 

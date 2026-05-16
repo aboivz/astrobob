@@ -92,10 +92,10 @@ class AstraClient:
         include_similarity: bool = True,
     ) -> list[dict]:
         """
-        Perform hybrid search with reranking on a collection.
+        Perform vector search with automatic embedding generation.
         
-        Uses AstraDB's built-in hybrid search ($vectorize + lexical) and
-        reranking capabilities.
+        Uses AstraDB's $vectorize to automatically generate embeddings
+        from the query string using the NVIDIA integration.
         
         Args:
             collection_name: Name of the collection to search
@@ -114,10 +114,10 @@ class AstraClient:
             db = self.get_database()
             collection = db.get_collection(collection_name)
             
-            # Build sort criteria for hybrid search
-            sort_criteria = {"$hybrid": query}
+            # Use $vectorize for automatic embedding generation
+            sort_criteria = {"$vectorize": query}
             
-            # Perform find with hybrid search and reranking
+            # Perform vector search with automatic embedding
             cursor = collection.find(
                 filter=filter_dict or {},
                 sort=sort_criteria,
@@ -132,7 +132,7 @@ class AstraClient:
             
         except DataAPIException as e:
             raise AstraConnectionError(
-                f"Hybrid search failed on collection '{collection_name}': {e}"
+                f"Vector search failed on collection '{collection_name}': {e}"
             ) from e
         except Exception as e:
             raise AstraConnectionError(

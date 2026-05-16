@@ -50,31 +50,12 @@ astrobob --version
 
 ---
 
-### 1.2 Initialize Project
+### 1.2 Configure AstraDB Credentials
 
 ```bash
 # Navigate to project directory
 cd ~/projects/ecommerce-platform
 
-# Initialize AstroBob
-astrobob init
-```
-
-**Expected Output**:
-```
-✓ Created .bob/mcp.json
-✓ Created .bob/custom_modes.yaml
-✓ Created .bob/skills/ (3 skills)
-✓ Created .env.example
-```
-
-**✅ Checkpoint**: `.bob/` directory created
-
----
-
-### 1.3 Configure AstraDB
-
-```bash
 # Copy environment template
 cp .env.example .env
 
@@ -89,6 +70,25 @@ ASTRA_DB_APPLICATION_TOKEN=AstraCS:YOUR_TOKEN_HERE
 ```
 
 **✅ Checkpoint**: `.env` contains valid credentials
+
+---
+
+### 1.3 Initialize Project
+
+```bash
+# Initialize AstroBob (reads credentials from .env)
+astrobob init
+```
+
+**Expected Output**:
+```
+✓ Created .bob/mcp.json (with your real credentials)
+✓ Created .bob/custom_modes.yaml
+✓ Created .bob/skills/ (3 skills)
+✓ Created .env.example
+```
+
+**✅ Checkpoint**: `.bob/` directory created with populated credentials
 
 ---
 
@@ -128,7 +128,7 @@ astrobob doctor
 
 ```bash
 # Start in STDIO mode (for Bob)
-astrobob mcp
+astrobob mcp serve
 ```
 
 **Expected**: Server running, waiting for connections
@@ -556,7 +556,7 @@ astrobob memory report
 - [ ] `astrobob init` works
 - [ ] `astrobob astra setup` works
 - [ ] `astrobob doctor` works
-- [ ] `astrobob mcp` works
+- [ ] `astrobob mcp serve` works
 - [ ] `astrobob memory remember` works
 - [ ] `astrobob memory recall` works
 - [ ] `astrobob memory reflect` works
@@ -583,6 +583,7 @@ astrobob memory report
 
 # Show the solution
 uv tool install git+https://github.com/aboivz/astrobob.git
+cp .env.example .env  # Add credentials
 astrobob init
 astrobob astra setup
 ```
@@ -624,11 +625,11 @@ astrobob skills sync
 
 ### MCP Server Won't Start
 ```bash
-# Check port availability
-netstat -an | grep 8765
+# Verify server starts
+astrobob mcp serve
 
-# Try different port
-astrobob mcp --http --port 8766
+# Check for errors in output
+# Ensure .env credentials are correct
 ```
 
 ### Bob Doesn't See Tools

@@ -40,9 +40,8 @@ def get_collection_definition(memory_type: MemoryType) -> dict:
     Get the collection definition for a memory type.
     
     All three collections use identical configuration with:
-    - Vector search (cosine metric, NVIDIA NV-Embed-QA-E5-V5)
-    - Lexical search enabled
-    - Reranking enabled (NVIDIA nv-rerank-qa-mistral-4b-v3)
+    - Vector search (cosine metric, NVIDIA nvidia/nv-embedqa-e5-v5)
+    - Automatic embedding generation via $vectorize
     - Indexed fields for efficient filtering
     
     Args:
@@ -53,11 +52,11 @@ def get_collection_definition(memory_type: MemoryType) -> dict:
     """
     return {
         "vector": {
-            "dimension": 1024,  # NV-Embed-QA-E5-V5 dimension
+            "dimension": 1024,  # nvidia/nv-embedqa-e5-v5 dimension
             "metric": "cosine",
             "service": {
                 "provider": "nvidia",
-                "modelName": "NV-Embed-QA-E5-V5",
+                "modelName": "nvidia/nv-embedqa-e5-v5",
             },
         },
         "indexing": {

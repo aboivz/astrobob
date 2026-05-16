@@ -501,7 +501,142 @@ def audit(
         console.print(f"[red]Error: {e}[/red]")
         sys.exit(2)
 
+
+@app.command()
+def recall(
+    query: str = typer.Argument(..., help="Search query"),
+    project: str = typer.Option(
+        "default",
+        "--project",
+        "-p",
+        help="Project to search",
+    ),
+    memory_types: list[Literal["semantic", "episodic", "procedural"]] = typer.Option(
+        [],
+        "--type",
+        "-t",
+        help="Memory types to search (can be specified multiple times, default: all)",
+    ),
+    tags: list[str] = typer.Option(
+        [],
+        "--tag",
+        help="Filter by tags (can be specified multiple times)",
+    ),
+    limit: int = typer.Option(
+        10,
+        "--limit",
+        "-l",
+        help="Maximum number of results",
+    ),
+    min_importance: Optional[int] = typer.Option(
+        None,
+        "--min-importance",
+        "-i",
+        min=1,
+        max=5,
+        help="Minimum importance level (1-5)",
+    ),
+):
+    """
+    Search and retrieve memories.
+    
+    Uses natural language queries with automatic query intent routing.
+    
+    Examples:
+      astrobob memory recall "how to add MCP tool" --project astrobob
+      astrobob memory recall "API patterns" --type procedural --min-importance 4
+      astrobob memory recall "authentication" --tag auth --tag security
+    """
+    console.print("\n[bold cyan]Searching memories...[/bold cyan]\n")
+    
+    # Load configuration
+    try:
+        config = ensure_config_or_exit()
+    except AstroBobError as e:
+        console.print(f"[red]Error: {e}[/red]")
+        sys.exit(1)
+    
+    # Create store and retriever
+    try:
+        client = create_astra_client(config)
+        db = client.get_database()
+        store = MemoryStore(db)
+        
+        # Import retriever here to avoid circular imports
+        from astrobob.core.retriever import MemoryRetriever
+        retriever = MemoryRetriever(client, store)
+    except AstroBobError as e:
         console.print(f"[red]Error: {e}[/red]")
         sys.exit(2)
+    
+    # Perform recall
+    try:
+        results = retriever.recall(
+            query=query,
+            project=project,
+            memory_types=memory_types if memory_types else None,
+            tags=tags if tags else None,
+            limit=limit,
+            min_importance=min_importance,
+        )
+        
+        if not results:
+            console.print(f"[yellow]No memories found matching '{query}'[/yellow]\n")
+            return
+        
+        console.print(f"[green]Found {len(results)} memories:[/green]\n")
+        
+        # Create results table
+        table = Table(title=f"Search Results for: {query}")
+        table.add_column("#", style="dim", width=3)
+        table.add_column("Type", style="cyan", width=10)
+        table.add_column("Content", style="white")
+        table.add_column("Score", justify="right", style="green", width=8)
+        table.add_column("Importance", justify="center", style="yellow", width=10)
+        table.add_column("Tags", style="blue")
+        
+        for i, (memory, score) in enumerate(results, 1):
+            content_preview = memory.content[:80] + "..." if len(memory.content) > 80 else memory.content
+            tags_str = ", ".join(memory.tags[:3]) if memory.tags else "-"
+            if len(memory.tags) > 3:
+                tags_str += f" +{len(memory.tags) - 3}"
+            
+            table.add_row(
+                str(i),
+                memory.memory_type,
+                content_preview,
+                f"{score:.4f}",
+                f"{memory.importance}/5",
+                tags_str,
+            )
+        
+        console.print(table)
+        console.print()
+        
+        # Show detailed view of top result
+        if results:
+            top_memory, top_score = results[0]
+            console.print("[bold]Top Result Details:[/bold]\n")
+            
+            detail_panel = Panel(
+                f"[bold]Content:[/bold]\n{top_memory.content}\n\n"
+                f"[bold]ID:[/bold] [cyan]{top_memory.id}[/cyan]\n"
+                f"[bold]Type:[/bold] {top_memory.memory_type}\n"
+                f"[bold]Project:[/bold] {top_memory.project}\n"
+                f"[bold]Importance:[/bold] {top_memory.importance}/5\n"
+                f"[bold]Score:[/bold] {top_score:.4f}\n"
+                f"[bold]Tags:[/bold] {', '.join(top_memory.tags) if top_memory.tags else 'none'}\n"
+                f"[bold]Created:[/bold] {top_memory.created_at.strftime('%Y-%m-%d %H:%M:%S')}",
+                title="Top Match",
+                border_style="green",
+            )
+            console.print(detail_panel)
+        
+        console.print()
+        
+    except AstroBobError as e:
+        console.print(f"[red]Error: {e}[/red]")
+        sys.exit(2)
+
 
 # Made with Bob
